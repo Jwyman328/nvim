@@ -71,6 +71,7 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+  { 'stevearc/conform.nvim',  opts = {} },
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -125,6 +126,7 @@ require('lazy').setup({
     'nvim-neo-tree/neo-tree.nvim',
     opts = {
       filesystem = {
+        follow_current_file = true,
         filtered_items = {
           visible = true,
           show_hidden_count = true,
@@ -587,7 +589,36 @@ local on_attach = function(_, bufnr)
   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
   nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
 
-  nmap('<leader>f', vim.lsp.buf.format, 'Format file')
+  -- formating / linting
+  require("conform").setup({
+    formatters_by_ft = {
+      lua = { "stylua" },
+      -- Conform will run multiple formatters sequentially
+      python = { "isort", "black" },
+      -- Use a sub-list to run only the first available formatter
+      javascript = { "prettier" },
+      typescript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescriptreact = { "prettier" },
+    },
+    format_on_save = {
+      lsp_fallback = true,
+      async = false,
+      timeout_ms = 50,
+    },
+  })
+  -- format on save
+  vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = "*",
+    callback = function(args)
+      require("conform").format({ bufnr = args.buf })
+    end,
+  })
+  -- format on f
+  vim.keymap.set({ "n", "v" }, "<leader>f", function()
+    require("conform").format()
+  end, { desc = "Format file or range (in visual mode)" })
+
 
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))

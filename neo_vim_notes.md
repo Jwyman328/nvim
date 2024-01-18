@@ -452,3 +452,12 @@ https://github.com/sindrets/diffview.nvim
   - :DiffviewOpen
 - To close it do
   -  : DiffviewClose
+
+
+
+#### How to add a new file in Neotree window?
+- a key will do it and then prompts you to enter in a new name
+
+
+#### Search Grep was not working here is how I fixed it
+- https://www.youtube.com/watch?v=6ivxInASPdM
