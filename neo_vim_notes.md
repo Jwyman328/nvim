@@ -461,3 +461,11 @@ https://github.com/sindrets/diffview.nvim
 
 #### Search Grep was not working here is how I fixed it
 - https://www.youtube.com/watch?v=6ivxInASPdM
+
+
+#### What is harpoon https://www.youtube.com/watch?v=Ioxsn-tsQqo&ab_channel=CantuCodes
+- you use telescope to show us the menu I guess.
+- harpoon can also be connected with tmux too I guess but this guy is only going to set it up for file tracking.
+- harpoon will give you a list of files you have marked
+- when you oopen harpoon it will show you the files you have marked. 
+- https://github.com/ThePrimeagen/harpoon

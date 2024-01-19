@@ -79,6 +79,8 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+  'nvim-lua/plenary.nvim',
+  'ThePrimeagen/harpoon',
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -476,6 +478,11 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+-- harpoon
+vim.keymap.set('n', '<leader>pm', require('harpoon.mark').add_file, { desc = "harpoon mark" })
+vim.keymap.set('n', '<leader>pn', require('harpoon.ui').nav_next, { desc = "harpoon next" })
+vim.keymap.set('n', '<leader>pp', require('harpoon.ui').nav_prev, { desc = "harpoon prev" })
+vim.keymap.set('n', '<leader>pa', require("harpoon.ui").toggle_quick_menu, { desc = "harpoon menu" })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -651,6 +658,37 @@ require('which-key').register({
   ['<leader>'] = { name = 'VISUAL <leader>' },
   ['<leader>h'] = { 'Git [H]unk' },
 }, { mode = 'v' })
+
+
+-- set up harpoon
+require("harpoon").setup({
+  global_settings = {
+    -- sets the marks upon calling `toggle` on the ui, instead of require `:w`.
+    save_on_toggle = false,
+
+    -- saves the harpoon file upon every change. disabling is unrecommended.
+    save_on_change = true,
+
+    -- sets harpoon to run the command immediately as it's passed to the terminal when calling `sendCommand`.
+    enter_on_sendcmd = false,
+
+    -- closes any tmux windows harpoon that harpoon creates when you close Neovim.
+    tmux_autoclose_windows = false,
+
+    -- filetypes that you want to prevent from adding to the harpoon list menu.
+    excluded_filetypes = { "harpoon" },
+
+    -- set marks specific to each git branch inside git repository
+    mark_branch = true,
+
+    -- enable tabline with harpoon marks
+    tabline = false,
+    tabline_prefix = "   ",
+    tabline_suffix = "   ",
+  }
+})
+-- use telescope as our UI for harpoon
+require("telescope").load_extension('harpoon')
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
