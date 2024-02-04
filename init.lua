@@ -478,6 +478,7 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>sp', ":Telescope harpoon marks<CR>", { desc = 'Harpoon Marks' })
 -- harpoon
 vim.keymap.set('n', '<leader>pm', require('harpoon.mark').add_file, { desc = "harpoon mark" })
 vim.keymap.set('n', '<leader>pn', require('harpoon.ui').nav_next, { desc = "harpoon next" })
