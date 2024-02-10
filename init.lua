@@ -87,6 +87,11 @@ require('lazy').setup({
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    opts = {
+      diagnostics = {
+        virtual_text = false,
+      },
+    },
     dependencies = {
       -- Automatically install LSPs to stdpath for neovim
       { 'williamboman/mason.nvim', config = true },
@@ -261,11 +266,15 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',                        opts = {} },
 
 
   -- set up copilot
-  { 'github/copilot.vim',    opts = {} },
+  { 'github/copilot.vim',                           opts = {} },
+
+  { 'github/copilot.vim',                           opts = {} },
+
+  { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -369,6 +378,16 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+-- float the lsp / linter error message
+vim.keymap.set('n', '<leader>lm', vim.diagnostic.open_float, { desc = 'Float lint /  lsp error message' })
+-- display/hide the lsp inline error message
+vim.keymap.set(
+  "n",
+  "<leader>ld",
+  require("lsp_lines").toggle,
+  { desc = "Display toggle lsp_lines" }
+)
+
 
 -- remap half page jump up and down to center itself
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -406,6 +425,14 @@ vim.opt.termguicolors = true
 
 -- OR setup with some options
 
+-- for better lsp error message displays
+require("lsp_lines").setup()
+-- toggle it via <leader>l
+
+-- remove the previous formatting
+vim.diagnostic.config({
+  virtual_text = false,
+})
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
