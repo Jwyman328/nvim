@@ -263,6 +263,10 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
+
+  -- set up copilot
+  { 'github/copilot.vim',    opts = {} },
+
   -- Fuzzy Finder (files, lsp, etc)
   {
     'nvim-telescope/telescope.nvim',
@@ -620,12 +624,13 @@ local on_attach = function(_, bufnr)
     },
   })
   -- format on save
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    pattern = "*",
-    callback = function(args)
-      require("conform").format({ bufnr = args.buf })
-    end,
-  })
+  -- commented out right now since it was way to slow
+  -- vim.api.nvim_create_autocmd("BufWritePre", {
+  --  pattern = "*",
+  --  callback = function(args)
+  --    require("conform").format({ bufnr = args.buf })
+  --  end,
+  -- })
   -- format on f
   vim.keymap.set({ "n", "v" }, "<leader>f", function()
     require("conform").format()
@@ -779,7 +784,7 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
+    ['<C-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
       elseif luasnip.expand_or_locally_jumpable() then
