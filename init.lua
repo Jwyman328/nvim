@@ -519,6 +519,13 @@ vim.keymap.set('n', '<leader>pm', require('harpoon.mark').add_file, { desc = "ha
 vim.keymap.set('n', '<leader>pn', require('harpoon.ui').nav_next, { desc = "harpoon next" })
 vim.keymap.set('n', '<leader>pp', require('harpoon.ui').nav_prev, { desc = "harpoon prev" })
 vim.keymap.set('n', '<leader>pa', require("harpoon.ui").toggle_quick_menu, { desc = "harpoon menu" })
+-- the following keymaps are for primagens harpoon config
+-- https://github.com/ThePrimeagen/init.lua/blob/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin/harpoon.lua
+local ui = require("harpoon.ui")
+vim.keymap.set("n", "<leader>p1", function() ui.nav_file(1) end)
+vim.keymap.set("n", "<leader>p2", function() ui.nav_file(2) end)
+vim.keymap.set("n", "<leader>p3", function() ui.nav_file(3) end)
+vim.keymap.set("n", "<leader>p4", function() ui.nav_file(4) end)
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
