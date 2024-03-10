@@ -133,7 +133,11 @@ require('lazy').setup({
     'nvim-neo-tree/neo-tree.nvim',
     opts = {
       filesystem = {
-        follow_current_file = true,
+        follow_current_file = {
+          enabled = true,          -- This will find and focus the file in the active buffer every time
+          --               -- the current file is changed while the tree is open.
+          leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+        },
         filtered_items = {
           visible = true,
           show_hidden_count = true,
@@ -270,7 +274,6 @@ require('lazy').setup({
 
 
   -- set up copilot
-  { 'github/copilot.vim',                           opts = {} },
 
   { 'github/copilot.vim',                           opts = {} },
 
@@ -644,7 +647,7 @@ local on_attach = function(_, bufnr)
     formatters_by_ft = {
       lua = { "stylua" },
       -- Conform will run multiple formatters sequentially
-      python = { "isort", "black" },
+      python = { "ruff", "black" },
       -- Use a sub-list to run only the first available formatter
       javascript = { "prettier" },
       typescript = { "prettier" },
