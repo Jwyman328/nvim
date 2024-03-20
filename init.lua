@@ -77,6 +77,9 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
 
+  -- surround enter and delete key bindings
+  'tpope/vim-surround',
+
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   'nvim-lua/plenary.nvim',
