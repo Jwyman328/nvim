@@ -156,6 +156,8 @@ require('lazy').setup({
       }
     }
   },
+  -- amongst your other plugins
+  { 'akinsho/toggleterm.nvim',                      version = "*", config = true },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -281,6 +283,20 @@ require('lazy').setup({
   { 'github/copilot.vim',                           opts = {} },
 
   { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
+
+  -- set up neogit
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim",  -- required
+      "sindrets/diffview.nvim", -- optional - Diff integration
+
+      -- Only one of these is needed, not both.
+      "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua",              -- optional
+    },
+    config = true
+  },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -746,6 +762,63 @@ require('mason').setup()
 require('mason-lspconfig').setup({
   ensure_installed = { "tsserver" }
 })
+
+
+-- setup toggleterm --
+require("toggleterm").setup {
+  -- size can be a number or function which is passed the current terminal
+  size = 13,
+  open_mapping = [[<c-t>]],
+  hide_numbers = true,      -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  autochdir = false,        -- when neovim changes it current directory the terminal will change it's own when next it's opened
+  shade_terminals = true,   -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
+  shading_factor = 2,       -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
+  start_in_insert = true,
+  insert_mappings = true,   -- whether or not the open mapping applies in insert mode
+  terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
+  persist_size = true,
+  persist_mode = true,      -- if set to true (default) the previous terminal mode will be remembered
+  direction = 'float',      -- 'vertical' | 'horizontal' | 'tab' | 'float',
+  close_on_exit = true,     -- close the terminal window when the process exits
+  -- Change the default shell. Can be a string or a function returning a string
+  shell = vim.o.shell,
+  auto_scroll = true, -- automatically scroll to the bottom on terminal output
+  -- This field is only relevant if direction is set to 'float'
+  float_opts = {
+    border = "curved",
+    winblend = 0,
+    highlights = {
+      border = "Normal",
+      background = "Normal",
+    }
+  },
+}
+
+local Terminal = require('toggleterm.terminal').Terminal
+local lazygit = Terminal:new {
+  cmd = 'lazygit',
+  hidden = true,
+  direction = 'float',
+}
+-- Lazy git toggle
+-- function LGT()
+--   lazygit:toggle()
+-- end
+
+-- vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
+
+-- setting up neogit
+local neogit = require("neogit")
+
+-- adjust this to override defaults
+neogit.setup {}
+
+function NGT()
+  neogit.open()
+end
+
+vim.api.nvim_set_keymap('n', '<leader>lg', ':lua NGT()<CR>', { noremap = true, silent = true })
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
