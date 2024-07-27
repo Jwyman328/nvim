@@ -76,6 +76,9 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  -- find and replace plugin
+  'nvim-lua/plenary.nvim',
+  'nvim-pack/nvim-spectre',
 
   -- surround enter and delete key bindings
   'tpope/vim-surround',
@@ -319,6 +322,7 @@ require('lazy').setup({
     },
   },
 
+
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
@@ -424,6 +428,22 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
   group = highlight_group,
   pattern = '*',
+})
+
+
+-- For Spectre find and replace
+
+vim.keymap.set('n', '<leader>Sa', '<cmd>lua require("spectre").toggle()<CR>', { -- search all
+  desc = "Toggle Spectre all"
+})
+vim.keymap.set('n', '<leader>Sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
+  desc = "Search current word"
+})
+vim.keymap.set('v', '<leader>Sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', {
+  desc = "Search current word"
+})
+vim.keymap.set('n', '<leader>Sr', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
+  desc = "Search on current file"
 })
 
 -- config this myelf for a tree file visual

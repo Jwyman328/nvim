@@ -469,3 +469,12 @@ https://github.com/sindrets/diffview.nvim
 - harpoon will give you a list of files you have marked
 - when you oopen harpoon it will show you the files you have marked. 
 - https://github.com/ThePrimeagen/harpoon
+
+
+#### Find and replace notes
+- I installed the plugin Spectre
+- I set my hot keys to leader Sa to open the find and replace. 
+- leader Sr to search current file
+- then I can enter in my changes and hit ? to see all the options
+- leader rc to make the change
+  - you will see a little done icon when it has been completed
