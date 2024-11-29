@@ -448,6 +448,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- copilot chat keymap
 vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
 vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
+vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot Chat' })
 
 
 -- For Spectre find and replace
