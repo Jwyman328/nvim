@@ -160,7 +160,7 @@ require('lazy').setup({
     }
   },
   -- amongst your other plugins
-  { 'akinsho/toggleterm.nvim',                      version = "*", config = true },
+  { 'akinsho/toggleterm.nvim', version = "*", config = true },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -278,12 +278,26 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',                        opts = {} },
+  { 'numToStr/Comment.nvim',   opts = {} },
 
 
   -- set up copilot
 
-  { 'github/copilot.vim',                           opts = {} },
+  { 'github/copilot.vim',      opts = {} },
+  -- copilot chat
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    branch = "canary",
+    dependencies = {
+      { "github/copilot.vim" },    -- or zbirenbaum/copilot.lua
+      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+    },
+    build = "make tiktoken",       -- Only on MacOS or Linux
+    opts = {
+      -- See Configuration section for options
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
 
   { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
 
@@ -429,6 +443,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+
+-- copilot chat keymap
+vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
+vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
 
 
 -- For Spectre find and replace
