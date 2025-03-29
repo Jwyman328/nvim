@@ -733,7 +733,7 @@ local on_attach = function(_, bufnr)
     format_on_save = {
       lsp_fallback = true,
       async = false,
-      timeout_ms = 50,
+      timeout_ms = 2000,
     },
   })
   -- format on save
