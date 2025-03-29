@@ -43,7 +43,6 @@ P.S. You can delete this when you're done too. It's your config now :)
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 --
 
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -71,7 +70,7 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
-  { 'stevearc/conform.nvim',  opts = {} },
+  { 'stevearc/conform.nvim', opts = {} },
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -105,7 +104,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim',       opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -129,7 +128,7 @@ require('lazy').setup({
     },
   },
 
-  {                     -- Useful plugin to show you pending keybinds.
+  { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     config = function() -- This is the function that runs, AFTER loading
@@ -137,13 +136,13 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').add {
-        { '<leader>c', group = '[C]ode',      hidden = false,     mode = { 'n', 'v' } },
-        { '<leader>d', group = '[D]ocument',  hidden = false, },
-        { '<leader>r', group = '[R]ename',    hidden = false, },
-        { '<leader>s', group = '[S]earch',    hidden = false, },
-        { '<leader>w', group = '[W]orkspace', hidden = false, },
-        { '<leader>t', group = '[T]oggle',    hidden = false, },
-        { '<leader>h', group = 'Git [H]unk',  mode = { 'n', 'v' } },
+        { '<leader>c', group = '[C]ode', hidden = false, mode = { 'n', 'v' } },
+        { '<leader>d', group = '[D]ocument', hidden = false },
+        { '<leader>r', group = '[R]ename', hidden = false },
+        { '<leader>s', group = '[S]earch', hidden = false },
+        { '<leader>w', group = '[W]orkspace', hidden = false },
+        { '<leader>t', group = '[T]oggle', hidden = false },
+        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       }
     end,
   },
@@ -156,7 +155,7 @@ require('lazy').setup({
     opts = {
       filesystem = {
         follow_current_file = {
-          enabled = true,          -- This will find and focus the file in the active buffer every time
+          enabled = true, -- This will find and focus the file in the active buffer every time
           --               -- the current file is changed while the tree is open.
           leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
@@ -172,11 +171,11 @@ require('lazy').setup({
           },
           never_show = {},
         },
-      }
-    }
+      },
+    },
   },
   -- amongst your other plugins
-  { 'akinsho/toggleterm.nvim',                      version = "*", config = true },
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -275,14 +274,14 @@ require('lazy').setup({
     },
   },
   {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
       -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-    }
+    },
   },
   {
     -- Add indentation guides even on blank lines
@@ -294,8 +293,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim',                        opts = {} },
-
+  { 'numToStr/Comment.nvim', opts = {} },
 
   -- set up copilot
   --
@@ -319,16 +317,16 @@ require('lazy').setup({
 
   -- set up neogit
   {
-    "NeogitOrg/neogit",
+    'NeogitOrg/neogit',
     dependencies = {
-      "nvim-lua/plenary.nvim",  -- required
-      "sindrets/diffview.nvim", -- optional - Diff integration
+      'nvim-lua/plenary.nvim', -- required
+      'sindrets/diffview.nvim', -- optional - Diff integration
 
       -- Only one of these is needed, not both.
-      "nvim-telescope/telescope.nvim", -- optional
-      "ibhagwan/fzf-lua",              -- optional
+      'nvim-telescope/telescope.nvim', -- optional
+      'ibhagwan/fzf-lua', -- optional
     },
-    config = true
+    config = true,
   },
 
   -- Fuzzy Finder (files, lsp, etc)
@@ -351,7 +349,6 @@ require('lazy').setup({
       },
     },
   },
-
 
   {
     -- Highlight, edit, and navigate code
@@ -382,7 +379,10 @@ require('lazy').setup({
 -- NOTE: You can change these options as you wish!
 
 -- Set highlight on search
-vim.o.hlsearch = false
+vim.o.hlsearch = true
+
+-- remove search with Esc
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Make line numbers default
 vim.wo.number = true
@@ -437,17 +437,11 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- float the lsp / linter error message
 vim.keymap.set('n', '<leader>lm', vim.diagnostic.open_float, { desc = 'Float lint /  lsp error message' })
 -- display/hide the lsp inline error message
-vim.keymap.set(
-  "n",
-  "<leader>ld",
-  require("lsp_lines").toggle,
-  { desc = "Display toggle lsp_lines" }
-)
-
+vim.keymap.set('n', '<leader>ld', require('lsp_lines').toggle, { desc = 'Display toggle lsp_lines' })
 
 -- remap half page jump up and down to center itself
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -460,27 +454,24 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
-
-
 -- copilot chat keymap
 -- vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
 -- vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
 -- vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
 
-
 -- For Spectre find and replace
 
 vim.keymap.set('n', '<leader>Sa', '<cmd>lua require("spectre").toggle()<CR>', { -- search all
-  desc = "Toggle Spectre all"
+  desc = 'Toggle Spectre all',
 })
 vim.keymap.set('n', '<leader>Sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
-  desc = "Search current word"
+  desc = 'Search current word',
 })
 vim.keymap.set('v', '<leader>Sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', {
-  desc = "Search current word"
+  desc = 'Search current word',
 })
 vim.keymap.set('n', '<leader>Sr', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
-  desc = "Search on current file"
+  desc = 'Search on current file',
 })
 
 -- config this myelf for a tree file visual
@@ -505,13 +496,13 @@ vim.opt.termguicolors = true
 -- OR setup with some options
 
 -- for better lsp error message displays
-require("lsp_lines").setup()
+require('lsp_lines').setup()
 -- toggle it via <leader>l
 
 -- remove the previous formatting
-vim.diagnostic.config({
+vim.diagnostic.config {
   virtual_text = false,
-})
+}
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -592,19 +583,27 @@ vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
-vim.keymap.set('n', '<leader>sp', ":Telescope harpoon marks<CR>", { desc = 'Harpoon Marks' })
+vim.keymap.set('n', '<leader>sp', ':Telescope harpoon marks<CR>', { desc = 'Harpoon Marks' })
 -- harpoon
-vim.keymap.set('n', '<leader>pm', require('harpoon.mark').add_file, { desc = "harpoon mark" })
-vim.keymap.set('n', '<leader>pn', require('harpoon.ui').nav_next, { desc = "harpoon next" })
-vim.keymap.set('n', '<leader>pp', require('harpoon.ui').nav_prev, { desc = "harpoon prev" })
-vim.keymap.set('n', '<leader>pa', require("harpoon.ui").toggle_quick_menu, { desc = "harpoon menu" })
+vim.keymap.set('n', '<leader>pm', require('harpoon.mark').add_file, { desc = 'harpoon mark' })
+vim.keymap.set('n', '<leader>pn', require('harpoon.ui').nav_next, { desc = 'harpoon next' })
+vim.keymap.set('n', '<leader>pp', require('harpoon.ui').nav_prev, { desc = 'harpoon prev' })
+vim.keymap.set('n', '<leader>pa', require('harpoon.ui').toggle_quick_menu, { desc = 'harpoon menu' })
 -- the following keymaps are for primagens harpoon config
 -- https://github.com/ThePrimeagen/init.lua/blob/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin/harpoon.lua
-local ui = require("harpoon.ui")
-vim.keymap.set("n", "<leader>p1", function() ui.nav_file(1) end)
-vim.keymap.set("n", "<leader>p2", function() ui.nav_file(2) end)
-vim.keymap.set("n", "<leader>p3", function() ui.nav_file(3) end)
-vim.keymap.set("n", "<leader>p4", function() ui.nav_file(4) end)
+local ui = require 'harpoon.ui'
+vim.keymap.set('n', '<leader>p1', function()
+  ui.nav_file(1)
+end)
+vim.keymap.set('n', '<leader>p2', function()
+  ui.nav_file(2)
+end)
+vim.keymap.set('n', '<leader>p3', function()
+  ui.nav_file(3)
+end)
+vim.keymap.set('n', '<leader>p4', function()
+  ui.nav_file(4)
+end)
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -719,23 +718,23 @@ local on_attach = function(_, bufnr)
   nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
 
   -- formating / linting
-  require("conform").setup({
+  require('conform').setup {
     formatters_by_ft = {
-      lua = { "stylua" },
+      lua = { 'stylua' },
       -- Conform will run multiple formatters sequentially
-      python = { "ruff", "black" },
+      python = { 'ruff', 'black' },
       -- Use a sub-list to run only the first available formatter
-      javascript = { "prettier" },
-      typescript = { "prettier" },
-      javascriptreact = { "prettier" },
-      typescriptreact = { "prettier" },
+      javascript = { 'prettier' },
+      typescript = { 'prettier' },
+      javascriptreact = { 'prettier' },
+      typescriptreact = { 'prettier' },
     },
     format_on_save = {
       lsp_fallback = true,
       async = false,
       timeout_ms = 2000,
     },
-  })
+  }
   -- format on save
   -- commented out right now since it was way to slow
   -- vim.api.nvim_create_autocmd("BufWritePre", {
@@ -745,10 +744,9 @@ local on_attach = function(_, bufnr)
   --  end,
   -- })
   -- format on f
-  vim.keymap.set({ "n", "v" }, "<leader>f", function()
-    require("conform").format()
-  end, { desc = "Format file or range (in visual mode)" })
-
+  vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
+    require('conform').format()
+  end, { desc = 'Format file or range (in visual mode)' })
 
   nmap('<leader>wl', function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
@@ -760,14 +758,11 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
-
 -- this is so that it is easier to leave the terminal mode
 vim.api.nvim_set_keymap('t', '<Leader><ESC>', '<C-\\><C-n>', { noremap = true })
 
-
-
 -- set up harpoon
-require("harpoon").setup({
+require('harpoon').setup {
   global_settings = {
     -- sets the marks upon calling `toggle` on the ui, instead of require `:w`.
     save_on_toggle = false,
@@ -782,54 +777,53 @@ require("harpoon").setup({
     tmux_autoclose_windows = false,
 
     -- filetypes that you want to prevent from adding to the harpoon list menu.
-    excluded_filetypes = { "harpoon" },
+    excluded_filetypes = { 'harpoon' },
 
     -- set marks specific to each git branch inside git repository
     mark_branch = true,
 
     -- enable tabline with harpoon marks
     tabline = false,
-    tabline_prefix = "   ",
-    tabline_suffix = "   ",
-  }
-})
+    tabline_prefix = '   ',
+    tabline_suffix = '   ',
+  },
+}
 -- use telescope as our UI for harpoon
-require("telescope").load_extension('harpoon')
+require('telescope').load_extension 'harpoon'
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
 require('mason').setup()
 require('mason-lspconfig').setup()
 
-
 -- setup toggleterm --
-require("toggleterm").setup {
+require('toggleterm').setup {
   -- size can be a number or function which is passed the current terminal
   size = 13,
   open_mapping = [[<c-t>]],
-  hide_numbers = true,      -- hide the number column in toggleterm buffers
+  hide_numbers = true, -- hide the number column in toggleterm buffers
   shade_filetypes = {},
-  autochdir = false,        -- when neovim changes it current directory the terminal will change it's own when next it's opened
-  shade_terminals = true,   -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
-  shading_factor = 2,       -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
+  autochdir = false, -- when neovim changes it current directory the terminal will change it's own when next it's opened
+  shade_terminals = true, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
+  shading_factor = 2, -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
   start_in_insert = true,
-  insert_mappings = true,   -- whether or not the open mapping applies in insert mode
+  insert_mappings = true, -- whether or not the open mapping applies in insert mode
   terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
   persist_size = true,
-  persist_mode = true,      -- if set to true (default) the previous terminal mode will be remembered
-  direction = 'float',      -- 'vertical' | 'horizontal' | 'tab' | 'float',
-  close_on_exit = true,     -- close the terminal window when the process exits
+  persist_mode = true, -- if set to true (default) the previous terminal mode will be remembered
+  direction = 'float', -- 'vertical' | 'horizontal' | 'tab' | 'float',
+  close_on_exit = true, -- close the terminal window when the process exits
   -- Change the default shell. Can be a string or a function returning a string
   shell = vim.o.shell,
   auto_scroll = true, -- automatically scroll to the bottom on terminal output
   -- This field is only relevant if direction is set to 'float'
   float_opts = {
-    border = "curved",
+    border = 'curved',
     winblend = 0,
     highlights = {
-      border = "Normal",
-      background = "Normal",
-    }
+      border = 'Normal',
+      background = 'Normal',
+    },
   },
 }
 
@@ -847,7 +841,7 @@ local lazygit = Terminal:new {
 -- vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
 
 -- setting up neogit
-local neogit = require("neogit")
+local neogit = require 'neogit'
 
 -- adjust this to override defaults
 neogit.setup {}
@@ -908,6 +902,12 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+-- Map keys to quickly navigate the quickfix list
+vim.api.nvim_set_keymap('n', '<leader>cn', ':cnext<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>cp', ':cprev<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>cf', ':cfirst<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>cl', ':clast<CR>', { noremap = true, silent = true })
+
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
@@ -961,9 +961,9 @@ cmp.setup {
 }
 
 -- Auto run :Neotree when Neovim starts
-vim.api.nvim_create_autocmd("VimEnter", {
-  pattern = "*",
-  command = "Neotree"
+vim.api.nvim_create_autocmd('VimEnter', {
+  pattern = '*',
+  command = 'Neotree',
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
