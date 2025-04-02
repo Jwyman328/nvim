@@ -74,6 +74,12 @@ require('lazy').setup({
 
   -- Git related plugins
   'tpope/vim-fugitive',
+  {
+    'kdheepak/lazygit.nvim',
+    cmd = { 'LazyGit', 'LazyGit', 'LazyGitConfig', 'LazyGitCurrentFile', 'LazyGitFilter', 'LazyGitFilterCurrentFile' },
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'Open lazy git' },
+  },
   'tpope/vim-rhubarb',
   -- find and replace plugin
   'nvim-lua/plenary.nvim',
@@ -322,9 +328,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim', -- required
       'sindrets/diffview.nvim', -- optional - Diff integration
 
-      -- Only one of these is needed, not both.
+      -- Only one of these is needed.
       'nvim-telescope/telescope.nvim', -- optional
-      'ibhagwan/fzf-lua', -- optional
     },
     config = true,
   },
@@ -834,23 +839,35 @@ local lazygit = Terminal:new {
   direction = 'float',
 }
 -- Lazy git toggle
--- function LGT()
---   lazygit:toggle()
--- end
+function LGT()
+  lazygit:toggle()
+end
 
--- vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
 
 -- setting up neogit
 local neogit = require 'neogit'
-
--- adjust this to override defaults
-neogit.setup {}
-
+--
+-- -- adjust this to override defaults
+neogit.setup {
+  disable_commit_confirmation = true, -- Optional: Disables the commit confirmation UI to speed things up
+  use_magit_keybindings = true, -- Optional: Magit-like keybindings for easier navigation (or leave false)
+  auto_refresh = true, -- Optional: Disables automatic refreshing of the Git status; you can refresh manually with :Neogit status
+  kind = 'floating', -- Optional: Opens Neogit in a vsplit; you can change it to 'split', 'float', etc.
+  integrations = {
+    diffview = true, -- Optional: Enable Diffview integration (only if you want it)
+    telescope = false, -- Optional: Use Telescope for Git-related searches if desired
+  },
+}
+--
 function NGT()
-  neogit.open()
+  -- do I need this?
+  -- neogit.refresh()
+  neogit.open { kind = 'floating' }
 end
 
-vim.api.nvim_set_keymap('n', '<leader>lg', ':lua NGT()<CR>', { noremap = true, silent = true })
+--
+vim.api.nvim_set_keymap('n', '<leader>ng', ':lua NGT()<CR>', { noremap = true, silent = true })
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
