@@ -74,6 +74,7 @@ require('lazy').setup({
 
   -- Git related plugins
   'tpope/vim-fugitive',
+
   {
     'kdheepak/lazygit.nvim',
     cmd = { 'LazyGit', 'LazyGit', 'LazyGitConfig', 'LazyGitCurrentFile', 'LazyGitFilter', 'LazyGitFilterCurrentFile' },
@@ -305,19 +306,19 @@ require('lazy').setup({
   --
   -- { 'github/copilot.vim',      opts = {} },
   -- -- copilot chat
-  -- {
-  --   "CopilotC-Nvim/CopilotChat.nvim",
-  --   branch = "main",
-  --   dependencies = {
-  --     { "github/copilot.vim" },    -- or zbirenbaum/copilot.lua
-  --     { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
-  --   },
-  --   build = "make tiktoken",       -- Only on MacOS or Linux
-  --   opts = {
-  --     -- See Configuration section for options
-  --   },
-  --   -- See Commands section for default commands if you want to lazy load on them
-  -- },
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    branch = 'main',
+    dependencies = {
+      { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
+      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+    },
+    build = 'make tiktoken', -- Only on MacOS or Linux
+    opts = {
+      -- See Configuration section for options
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
 
   { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
 
@@ -460,9 +461,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- copilot chat keymap
--- vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
--- vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
--- vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
+vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
+vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
+vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
+
+-- Neotree keymaps
+vim.keymap.set('n', '<leader>nf', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
+vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
+vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
 
 -- For Spectre find and replace
 
@@ -844,6 +850,10 @@ function LGT()
 end
 
 vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
+
+-- Fugitive mappings
+vim.api.nvim_set_keymap('n', '<leader>gh', ':0GcLog<CR>', { noremap = true, silent = true, desc = 'Git commit log' })
+vim.api.nvim_set_keymap('n', '<leader>gf', ':Gvdiffsplit<CR>', { noremap = true, silent = true, desc = 'Git file diff' })
 
 -- setting up neogit
 local neogit = require 'neogit'
