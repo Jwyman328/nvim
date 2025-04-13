@@ -749,11 +749,6 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
-  -- Custom find reference function
-  -- local find_reference_custom_display = function()
-  --   require('telescope.builtin').lsp_references(custom_layout_config)
-  -- end
-
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
@@ -899,8 +894,19 @@ end
 vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
 
 -- Fugitive mappings
+vim.api.nvim_set_keymap('n', '<leader>gS', ':Git<CR>', { noremap = true, silent = true, desc = 'Git status' })
 vim.api.nvim_set_keymap('n', '<leader>gh', ':0GcLog<CR>', { noremap = true, silent = true, desc = 'Git commit log' })
-vim.api.nvim_set_keymap('n', '<leader>gf', ':Gvdiffsplit<CR>', { noremap = true, silent = true, desc = 'Git file diff' })
+vim.api.nvim_set_keymap(
+  'n',
+  '<leader>gf',
+  ':Gvdiffsplit HEAD<CR>',
+  { noremap = true, silent = true, desc = 'Git diff current file to previous file commit (includes staged and unstaged)' }
+)
+vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
+  noremap = true,
+  silent = true,
+  desc = 'Git diff: unstaged changes only vs previous commit and current staged changes',
+})
 
 -- setting up neogit
 local neogit = require 'neogit'
