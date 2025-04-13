@@ -591,6 +591,11 @@ local oldfiles_custom_display = function()
   require('telescope.builtin').oldfiles(custom_layout_config)
 end
 
+-- Custom livegrap function
+local livegrep_custom_display = function()
+  require('telescope.builtin').live_grep(custom_layout_config)
+end
+
 vim.keymap.set('n', '<leader>?', oldfiles_custom_display, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
@@ -622,7 +627,7 @@ vim.keymap.set('n', '<leader>sf', find_files_custom_display, {
 })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('n', '<leader>sg', livegrep_custom_display, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
@@ -910,6 +915,14 @@ end
 
 --
 vim.api.nvim_set_keymap('n', '<leader>ng', ':lua NGT()<CR>', { noremap = true, silent = true })
+
+-- Copilot related stuff
+require('CopilotChat').setup {
+  model = 'claude-3.7-sonnet',
+  window = {
+    layout = 'float',
+  },
+}
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
