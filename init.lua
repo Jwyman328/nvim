@@ -596,6 +596,11 @@ local livegrep_custom_display = function()
   require('telescope.builtin').live_grep(custom_layout_config)
 end
 
+-- Custom find references function
+local find_reference_custom_display = function()
+  require('telescope.builtin').lsp_references(custom_layout_config)
+end
+
 vim.keymap.set('n', '<leader>?', oldfiles_custom_display, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
 vim.keymap.set('n', '<leader>/', function()
@@ -744,11 +749,16 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
+  -- Custom find reference function
+  -- local find_reference_custom_display = function()
+  --   require('telescope.builtin').lsp_references(custom_layout_config)
+  -- end
+
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   nmap('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-  nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+  nmap('gr', find_reference_custom_display, '[G]oto [R]eferences')
   nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
   nmap('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
