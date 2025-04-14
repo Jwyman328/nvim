@@ -287,6 +287,19 @@ require('lazy').setup({
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch' },
+        lualine_c = {
+          {
+            'filename',
+            path = 1, -- 0 = filename, 1 = relative path, 2 = absolute path
+          },
+        },
+        lualine_x = {},
+        -- lualine_y = { 'progress' },
+        -- lualine_z = { 'location' },
+      },
     },
   },
   {
