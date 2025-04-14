@@ -155,7 +155,16 @@ require('lazy').setup({
   },
 
   -- for git diff viewing
-  { 'sindrets/diffview.nvim', opts = {} },
+  {
+    'sindrets/diffview.nvim',
+    opts = {},
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewToggleFiles', 'DiffviewFocusFiles' },
+    keys = {
+      { '<leader>gb', '<cmd>DiffviewOpen<CR>', desc = 'Open Diffview (HEAD vs current)' },
+      { '<leader>gq', '<cmd>DiffviewClose<CR>', desc = 'Close Diffview' },
+    },
+  },
   -- plugin for sidebar file tree
   {
     'nvim-neo-tree/neo-tree.nvim',
@@ -321,19 +330,6 @@ require('lazy').setup({
   },
 
   { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
-
-  -- set up neogit
-  {
-    'NeogitOrg/neogit',
-    dependencies = {
-      'nvim-lua/plenary.nvim', -- required
-      'sindrets/diffview.nvim', -- optional - Diff integration
-
-      -- Only one of these is needed.
-      'nvim-telescope/telescope.nvim', -- optional
-    },
-    config = true,
-  },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -907,30 +903,6 @@ vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
   silent = true,
   desc = 'Git diff: unstaged changes only vs previous commit and current staged changes',
 })
-
--- setting up neogit
-local neogit = require 'neogit'
---
--- -- adjust this to override defaults
-neogit.setup {
-  disable_commit_confirmation = true, -- Optional: Disables the commit confirmation UI to speed things up
-  use_magit_keybindings = true, -- Optional: Magit-like keybindings for easier navigation (or leave false)
-  auto_refresh = true, -- Optional: Disables automatic refreshing of the Git status; you can refresh manually with :Neogit status
-  kind = 'floating', -- Optional: Opens Neogit in a vsplit; you can change it to 'split', 'float', etc.
-  integrations = {
-    diffview = true, -- Optional: Enable Diffview integration (only if you want it)
-    telescope = false, -- Optional: Use Telescope for Git-related searches if desired
-  },
-}
---
-function NGT()
-  -- do I need this?
-  -- neogit.refresh()
-  neogit.open { kind = 'floating' }
-end
-
---
-vim.api.nvim_set_keymap('n', '<leader>ng', ':lua NGT()<CR>', { noremap = true, silent = true })
 
 -- Copilot related stuff
 require('CopilotChat').setup {
