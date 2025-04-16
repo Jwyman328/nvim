@@ -342,6 +342,18 @@ require('lazy').setup({
     -- See Commands section for default commands if you want to lazy load on them
   },
 
+  -- packages for debuggers
+  -- initially for react and python debugging
+  'mfussenegger/nvim-dap',
+  'nvim-neotest/nvim-nio',
+  'rcarriga/nvim-dap-ui',
+  'theHamsta/nvim-dap-virtual-text',
+
+  'antoinemadec/FixCursorHold.nvim',
+  'nvim-neotest/neotest',
+  'marilari88/neotest-vitest',
+  'mxsdev/nvim-dap-vscode-js',
+
   { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
@@ -1032,6 +1044,133 @@ cmp.setup {
     { name = 'path' },
   },
 }
+
+-- Stuff for setting up debugging react and python?
+require('dapui').setup()
+require('nvim-dap-virtual-text').setup()
+require('neotest').setup {
+  adapters = {
+    require 'neotest-vitest',
+  },
+}
+
+vim.keymap.set('n', '<leader>bu', ":lua require('dapui').open()<CR>", { desc = 'Bugger ui' })
+vim.keymap.set('n', '<leader>bc', ":lua require('dapui').close()<CR>", { desc = 'Bugger ui close' })
+vim.keymap.set('n', '<leader>bt', ":lua require('dapui').toggle()<CR>", { desc = 'Bugger toggle' })
+
+vim.keymap.set('n', '<leader>bs', ":lua require('dap').toggle_breakpoint()<CR>")
+vim.keymap.set('n', '<leader>br', ":lua require('dap').step_over()<CR>")
+vim.keymap.set('n', '<leader>bi', ":lua require('dap').step_into()<CR>")
+
+-- If the debugger hasn’t started yet — it starts the debug session
+-- If the debugger is already running and paused — it resumes execution
+vim.keymap.set('n', '<leader>br', ":lua require('dap').continue()<CR>", { desc = 'Bugger run/continue' })
+
+vim.keymap.set('n', '<leader>bd', ":lua require('neotest').run.run({strategy='dap'})<CR>")
+
+local js_based_languages = {
+  'typescript',
+  'javascript',
+  'typescriptreact',
+  'javascriptreact',
+}
+
+local install_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
+local vscode_js_debug_path = install_path
+
+-- attaching to an existing chrome doesn't work since
+-- it has to be in debug mode
+-- also using the dap config to launch chrome doesn't work well
+-- it is always so slow, therefore this function below allows me to easily launch
+-- chrome in debug mode so that I can attach to it.
+local function launch_chrome_debug()
+  local chrome_cmd = [[
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+    --remote-debugging-port=9222 \
+    --user-data-dir=/tmp/chrome-debug-profile
+  ]]
+  -- Launch Chrome in the background
+  vim.fn.jobstart(chrome_cmd, {
+    detach = true,
+  })
+  print '🚀 Chrome launched with debugging port 9222.'
+end
+
+vim.keymap.set('n', '<leader>lc', launch_chrome_debug, { desc = 'Launch Chrome Debug' })
+
+require('dap-vscode-js').setup {
+  debugger_path = vscode_js_debug_path,
+  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+}
+
+local dap = require 'dap'
+for _, language in ipairs(js_based_languages) do
+  dap.configurations[language] = {
+    -- Debug single nodejs files
+    {
+      type = 'pwa-node',
+      request = 'launch',
+      name = 'Launch file',
+      program = '${file}',
+      cwd = vim.fn.getcwd(),
+      sourceMaps = true,
+    },
+    {
+      type = 'pwa-chrome',
+      request = 'launch',
+      name = 'Launch Chrome',
+      webRoot = '${workspaceFolder}/src',
+      cwd = vim.fn.getcwd(),
+      url = 'https://localhost:3030',
+      sourceMaps = true,
+      skipFiles = {
+        '<node_internals>/**',
+        '**/node_modules/**',
+      },
+    },
+    -- attach to chrome that is opened in debug mode on port 9222
+    -- look at function above function launch_chrome_debug
+    -- for how to launch chrome debug correctly.
+    -- use this one for most success
+    {
+      type = 'pwa-chrome',
+      request = 'attach',
+      name = 'Attach to Chrome (React) (best option), run after launch_chrome_debug',
+      webRoot = '${workspaceFolder}/src',
+      cwd = vim.fn.getcwd(),
+      port = 9222, -- Must match the port from step 1
+
+      url = 'https://localhost:3030',
+      sourceMaps = true,
+      -- userDataDir = false, -- ⬅️ use existing Chrome profile
+    },
+  }
+end
+dap.adapters['pwa-node'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  executable = {
+    command = 'node',
+    args = {
+      vscode_js_debug_path .. '/js-debug/src/dapDebugServer.js',
+      '${port}',
+    },
+  },
+}
+dap.adapters['pwa-chrome'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  executable = {
+    command = 'node',
+    args = {
+      vscode_js_debug_path .. '/js-debug/src/dapDebugServer.js',
+      '${port}',
+    },
+  },
+}
+-- end of debugging stuff
 
 -- Auto run :Neotree when Neovim starts
 vim.api.nvim_create_autocmd('VimEnter', {
