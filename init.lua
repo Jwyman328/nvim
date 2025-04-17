@@ -993,13 +993,12 @@ mason_lspconfig.setup_handlers {
 
 -- Map keys to quickly navigate and open the quickfix list
 
-vim.api.nvim_set_keymap('n', '<leader>qo', ':copen<CR>', { noremap = true, silent = true, desc = 'Open quickfix list' })
-vim.api.nvim_set_keymap('n', '<leader>qc', ':cclose<CR>', { noremap = true, silent = true, desc = 'Close quickfix list' })
-vim.api.nvim_set_keymap('n', '<leader>cc', ':clast<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>cn', ':cnext<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>cp', ':cprev<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>cf', ':cfirst<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>cl', ':clast<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>qo', ':copen<CR>', { noremap = true, silent = true, desc = 'Quickfix list open' })
+vim.api.nvim_set_keymap('n', '<leader>qc', ':cclose<CR>', { noremap = true, silent = true, desc = 'Quickfix list close' })
+vim.api.nvim_set_keymap('n', '<leader>qn', ':cnext<CR>', { noremap = true, silent = true, desc = 'Quickfix next' })
+vim.api.nvim_set_keymap('n', '<leader>qp', ':cprev<CR>', { noremap = true, silent = true, desc = 'Quickfix prev' })
+vim.api.nvim_set_keymap('n', '<leader>qf', ':cfirst<CR>', { noremap = true, silent = true, desc = 'Quickfix first' })
+vim.api.nvim_set_keymap('n', '<leader>ql', ':clast<CR>', { noremap = true, silent = true, desc = 'Quickfix last' })
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
