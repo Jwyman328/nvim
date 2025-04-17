@@ -457,10 +457,14 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
+-- This is a location list, similar to a quickfix list
+-- but it is a location list, aka scoped to the file it is in.
+vim.keymap.set('n', '<leader>do', vim.diagnostic.setloclist, { desc = 'Diagnostics open' })
+-- This will actually close any location list
+vim.keymap.set('n', '<leader>dc', ':lclose<CR>', { desc = 'Diagnostics close' })
+vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
+vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 -- float the lsp / linter error message
 vim.keymap.set('n', '<leader>lm', vim.diagnostic.open_float, { desc = 'Float lint /  lsp error message' })
 -- display/hide the lsp inline error message
@@ -1104,7 +1108,7 @@ vim.keymap.set('n', '<leader>lc', launch_chrome_debug, { desc = 'Launch Chrome D
 
 require('dap-vscode-js').setup {
   debugger_path = vscode_js_debug_path,
-  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' }, -- which adapters to register in nvim-dap
+  adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost', 'python' }, -- which adapters to register in nvim-dap
 }
 
 local dap = require 'dap'
@@ -1148,6 +1152,22 @@ for _, language in ipairs(js_based_languages) do
       sourceMaps = true,
       -- userDataDir = false, -- ⬅️ use existing Chrome profile
     },
+    {
+
+      type = 'python',
+      request = 'attach',
+      name = 'attach python',
+      connect = {
+        host = 'localhost',
+        port = 5678,
+      },
+      pathMappings = {
+        {
+          localRoot = '${workspaceFolder}',
+          remoteRoot = '.',
+        },
+      },
+    },
   }
 end
 dap.adapters['pwa-node'] = {
@@ -1173,6 +1193,12 @@ dap.adapters['pwa-chrome'] = {
       '${port}',
     },
   },
+}
+
+dap.adapters['python'] = {
+  type = 'server',
+  host = 'localhost',
+  port = 5678,
 }
 -- end of debugging stuff
 
