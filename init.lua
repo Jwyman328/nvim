@@ -460,7 +460,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 -- float the lsp / linter error message
 vim.keymap.set('n', '<leader>lm', vim.diagnostic.open_float, { desc = 'Float lint /  lsp error message' })
 -- display/hide the lsp inline error message
@@ -987,7 +987,11 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
--- Map keys to quickly navigate the quickfix list
+-- Map keys to quickly navigate and open the quickfix list
+
+vim.api.nvim_set_keymap('n', '<leader>qo', ':copen<CR>', { noremap = true, silent = true, desc = 'Open quickfix list' })
+vim.api.nvim_set_keymap('n', '<leader>qc', ':cclose<CR>', { noremap = true, silent = true, desc = 'Close quickfix list' })
+vim.api.nvim_set_keymap('n', '<leader>cc', ':clast<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>cn', ':cnext<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>cp', ':cprev<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>cf', ':cfirst<CR>', { noremap = true, silent = true })
