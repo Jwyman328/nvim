@@ -938,6 +938,8 @@ require('CopilotChat').setup {
   model = 'claude-3.7-sonnet',
   window = {
     layout = 'float',
+    width = 0.8, -- 60% of screen width
+    height = 0.8, -- 70% of screen height
   },
 }
 
@@ -991,14 +993,21 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+-- Quickfix list
 -- Map keys to quickly navigate and open the quickfix list
-
 vim.api.nvim_set_keymap('n', '<leader>qo', ':copen<CR>', { noremap = true, silent = true, desc = 'Quickfix list open' })
+-- add close_quickfix function here
 vim.api.nvim_set_keymap('n', '<leader>qc', ':cclose<CR>', { noremap = true, silent = true, desc = 'Quickfix list close' })
 vim.api.nvim_set_keymap('n', '<leader>qn', ':cnext<CR>', { noremap = true, silent = true, desc = 'Quickfix next' })
 vim.api.nvim_set_keymap('n', '<leader>qp', ':cprev<CR>', { noremap = true, silent = true, desc = 'Quickfix prev' })
 vim.api.nvim_set_keymap('n', '<leader>qf', ':cfirst<CR>', { noremap = true, silent = true, desc = 'Quickfix first' })
 vim.api.nvim_set_keymap('n', '<leader>ql', ':clast<CR>', { noremap = true, silent = true, desc = 'Quickfix last' })
+-- Empty the quickfix list
+
+vim.keymap.set('n', '<leader>qe', function()
+  vim.fn.setqflist({}, 'r')
+  vim.cmd 'cclose'
+end, { desc = 'Quickfix empty and close' })
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
