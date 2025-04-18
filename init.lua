@@ -214,7 +214,7 @@ require('lazy').setup({
         end
 
         -- Navigation
-        map({ 'n', 'v' }, ']c', function()
+        map({ 'n', 'v' }, '<leader>hn', function()
           if vim.wo.diff then
             return ']c'
           end
@@ -224,7 +224,7 @@ require('lazy').setup({
           return '<Ignore>'
         end, { expr = true, desc = 'Jump to next hunk' })
 
-        map({ 'n', 'v' }, '[c', function()
+        map({ 'n', 'v' }, '<leader>hp', function()
           if vim.wo.diff then
             return '[c'
           end
@@ -243,12 +243,13 @@ require('lazy').setup({
           gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end, { desc = 'reset git hunk' })
         -- normal mode
+        map('n', '<leader>hl', ':Gitsigns setloclist<CR>', { desc = 'git hunk list' })
         map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
         map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
         map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
         map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
         map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        map('n', '<leader>hv', gs.preview_hunk, { desc = 'git hunk visualize' })
         map('n', '<leader>hb', function()
           gs.blame_line { full = false }
         end, { desc = 'git blame line' })
@@ -459,9 +460,7 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 -- This is a location list, similar to a quickfix list
 -- but it is a location list, aka scoped to the file it is in.
-vim.keymap.set('n', '<leader>do', vim.diagnostic.setloclist, { desc = 'Diagnostics open' })
--- This will actually close any location list
-vim.keymap.set('n', '<leader>dc', ':lclose<CR>', { desc = 'Diagnostics close' })
+vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Diagnostics list' })
 vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
 vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
@@ -484,6 +483,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+-- location list key maps
+-- Location list open/close
+vim.keymap.set('n', '<leader>lo', ':lopen<CR>', { noremap = true, silent = true, desc = 'Location list open' })
+vim.keymap.set('n', '<leader>lc', ':lclose<CR>', { noremap = true, silent = true, desc = 'Location list close' })
+vim.keymap.set('n', '<leader>le', function()
+  vim.fn.setloclist(0, {})
+  vim.cmd 'lclose'
+end, { desc = 'Location List empty', silent = true })
+
+-- Location list Navigation
+vim.keymap.set('n', '<leader>ln', ':lnext<CR>', { noremap = true, silent = true, desc = 'Location list next' })
+vim.keymap.set('n', '<leader>lp', ':lprev<CR>', { noremap = true, silent = true, desc = 'Location list prev' })
+vim.keymap.set('n', '<leader>lf', ':lfirst<CR>', { noremap = true, silent = true, desc = 'Location list first' })
+vim.keymap.set('n', '<leader>ll', ':llast<CR>', { noremap = true, silent = true, desc = 'Location list last' })
 
 -- copilot chat keymap
 vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
@@ -1112,7 +1126,7 @@ local function launch_chrome_debug()
   print '🚀 Chrome launched with debugging port 9222.'
 end
 
-vim.keymap.set('n', '<leader>lc', launch_chrome_debug, { desc = 'Launch Chrome Debug' })
+vim.keymap.set('n', '<leader>cl', launch_chrome_debug, { desc = 'Chrome launch' })
 
 require('dap-vscode-js').setup {
   debugger_path = vscode_js_debug_path,
