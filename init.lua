@@ -76,12 +76,6 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
 
-  {
-    'kdheepak/lazygit.nvim',
-    cmd = { 'LazyGit', 'LazyGit', 'LazyGitConfig', 'LazyGitCurrentFile', 'LazyGitFilter', 'LazyGitFilterCurrentFile' },
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    keys = { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'Open lazy git' },
-  },
   'tpope/vim-rhubarb',
   -- find and replace plugin
   'nvim-lua/plenary.nvim',
@@ -921,19 +915,6 @@ require('toggleterm').setup {
     },
   },
 }
-
-local Terminal = require('toggleterm.terminal').Terminal
-local lazygit = Terminal:new {
-  cmd = 'lazygit',
-  hidden = true,
-  direction = 'float',
-}
--- Lazy git toggle
-function LGT()
-  lazygit:toggle()
-end
-
-vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
 
 -- Fugitive mappings
 vim.keymap.set('n', '<leader>gs', ':Gwrite<CR>', { desc = 'Git stage current file' })
