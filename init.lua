@@ -13,6 +13,7 @@ Kickstart.nvim is a template for your own configuration.
   Once you've done that, you should start exploring, configuring and tinkering to
   explore Neovim!
 
+--
   If you don't know anything about Lua, I recommend taking some time to read through
   a guide. One possible example:
   - https://learnxinyminutes.com/docs/lua/
@@ -665,7 +666,7 @@ end
 
 vim.keymap.set('n', '<leader>s/', telescope_live_grep_open_files, { desc = '[S]earch [/] in Open Files' })
 vim.keymap.set('n', '<leader>st', require('telescope.builtin').builtin, { desc = '[S]earch [S]elect Telescope' })
-vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
+vim.keymap.set('n', '<leader>stf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>sf', find_files_custom_display, {
   desc = '[S]earch [F]iles',
 })
@@ -935,6 +936,11 @@ end
 vim.api.nvim_set_keymap('n', '<leader>lg', ':lua LGT()<CR>', { noremap = true, silent = true })
 
 -- Fugitive mappings
+vim.keymap.set('n', '<leader>gs', ':Gwrite<CR>', { desc = 'Git stage current file' })
+vim.keymap.set('n', '<leader>gg', ':!git restore --staged %<CR>', {
+  desc = 'Git unstage current file',
+  silent = true,
+})
 vim.api.nvim_set_keymap('n', '<leader>gS', ':Git<CR>', { noremap = true, silent = true, desc = 'Git status' })
 vim.api.nvim_set_keymap('n', '<leader>gh', ':0GcLog<CR>', { noremap = true, silent = true, desc = 'Git commit log' })
 vim.api.nvim_set_keymap(
@@ -943,6 +949,7 @@ vim.api.nvim_set_keymap(
   ':Gvdiffsplit HEAD<CR>',
   { noremap = true, silent = true, desc = 'Git diff current file to previous file commit (includes staged and unstaged)' }
 )
+
 vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
   noremap = true,
   silent = true,
@@ -1231,6 +1238,9 @@ vim.api.nvim_create_autocmd('VimEnter', {
   pattern = '*',
   command = 'Neotree',
 })
+-- Simple keymap for current windows
+vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
+vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
