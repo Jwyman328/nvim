@@ -142,6 +142,7 @@ require('lazy').setup({
         { '<leader>d', group = '[D]iagnostics', hidden = false, mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename', hidden = false },
         { '<leader>s', group = '[S]earch', hidden = false },
+        { '<leader>S', group = '[S]pectre find and replace', hidden = false },
         { '<leader>w', group = '[W]indows', hidden = false },
         { '<leader>t', group = '[T]oggle', hidden = false },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -462,10 +463,10 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 -- This is a location list, similar to a quickfix list
 -- but it is a location list, aka scoped to the file it is in.
-vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Diagnostics list' })
-vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
+vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = '[D]iagnostics [L]ist' })
+vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = '[D]iagnostics [P]rev' })
+vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = '[D]iagnostics [N]ext' })
+vim.keymap.set('n', '<leader>do', vim.diagnostic.open_float, { desc = '[D]iagnostics [O]pen in floating message' })
 -- float the lsp / linter error message
 vim.keymap.set('n', '<leader>lm', vim.diagnostic.open_float, { desc = 'Float lint /  lsp error message' })
 -- display/hide the lsp inline error message
@@ -512,7 +513,6 @@ vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
 vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
 
 -- For Spectre find and replace
-
 vim.keymap.set('n', '<leader>Sa', '<cmd>lua require("spectre").toggle()<CR>', { -- search all
   desc = 'Toggle Spectre all',
 })
@@ -642,9 +642,9 @@ local find_reference_custom_display = function()
   require('telescope.builtin').lsp_references(custom_layout_config)
 end
 
-vim.keymap.set('n', '<leader>?', oldfiles_custom_display, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>sr', oldfiles_custom_display, { desc = '[S]earch [R]ecently opened files' })
 vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
-vim.keymap.set('n', '<leader>/', function()
+vim.keymap.set('n', '<leader>si', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find {
     layout_strategy = 'horizontal',
@@ -656,7 +656,7 @@ vim.keymap.set('n', '<leader>/', function()
     sorting_strategy = 'ascending',
     previewer = false,
   }
-end, { desc = '[/] Fuzzily search in current buffer' })
+end, { desc = '[S]earch [I]nside current buffer Fuzzily' })
 
 local function telescope_live_grep_open_files()
   require('telescope.builtin').live_grep {
@@ -677,7 +677,7 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', livegrep_custom_display, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set('n', '<leader>sa', require('telescope.builtin').resume, { desc = '[S]earch [A]gain' })
 vim.keymap.set('n', '<leader>sp', ':Telescope harpoon marks<CR>', { desc = 'Harpoon Marks' })
 
 -- harpoon
