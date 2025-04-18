@@ -138,13 +138,19 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').add {
-        { '<leader>c', group = '[C]ode', hidden = false, mode = { 'n', 'v' } },
-        { '<leader>d', group = '[D]ocument', hidden = false },
+        { '<leader>c', group = '[C]o-pilot / chrome', hidden = false, mode = { 'n', 'v' } },
+        { '<leader>d', group = '[D]iagnostics', hidden = false, mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename', hidden = false },
         { '<leader>s', group = '[S]earch', hidden = false },
-        { '<leader>w', group = '[W]orkspace', hidden = false },
+        { '<leader>w', group = '[W]indows', hidden = false },
         { '<leader>t', group = '[T]oggle', hidden = false },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it file actions', mode = { 'n', 'v' } },
+        { '<leader>b', group = 'De[B]ugger', mode = { 'n', 'v' } },
+        { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
+        { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
+        { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
+        { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
       }
     end,
   },
@@ -239,12 +245,13 @@ require('lazy').setup({
         end, { desc = 'reset git hunk' })
         -- normal mode
         map('n', '<leader>hl', ':Gitsigns setloclist<CR>', { desc = 'git hunk list' })
-        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        map('n', '<leader>hv', gs.preview_hunk, { desc = 'git hunk visualize' })
+        -- not sure what these do so commenting out for now
+        -- map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        -- map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        -- map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        -- map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        -- map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        -- map('n', '<leader>hv', gs.preview_hunk, { desc = 'git hunk visualize' })
         map('n', '<leader>hb', function()
           gs.blame_line { full = false }
         end, { desc = 'git blame line' })
