@@ -918,8 +918,8 @@ require('toggleterm').setup {
 
 -- Fugitive mappings
 vim.keymap.set('n', '<leader>gs', ':Gwrite<CR>', { desc = 'Git stage current file' })
-vim.keymap.set('n', '<leader>gg', ':!git restore --staged %<CR>', {
-  desc = 'Git unstage current file',
+vim.keymap.set('n', '<leader>gr', ':!git restore --staged %<CR>', {
+  desc = 'Git  reverse aka unstage current file',
   silent = true,
 })
 vim.api.nvim_set_keymap('n', '<leader>gS', ':Git<CR>', { noremap = true, silent = true, desc = 'Git status' })
