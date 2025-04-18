@@ -643,7 +643,7 @@ local find_reference_custom_display = function()
 end
 
 vim.keymap.set('n', '<leader>sr', oldfiles_custom_display, { desc = '[S]earch [R]ecently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = 'Search [B]uffers' })
 vim.keymap.set('n', '<leader>si', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find {
@@ -765,10 +765,10 @@ vim.defer_fn(function()
       swap = {
         enable = true,
         swap_next = {
-          ['<leader>a'] = '@parameter.inner',
+          ['<leader>ta'] = '@parameter.inner',
         },
         swap_previous = {
-          ['<leader>A'] = '@parameter.inner',
+          ['<leader>tA'] = '@parameter.inner',
         },
       },
     },
