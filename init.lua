@@ -544,19 +544,6 @@ vim.keymap.set('n', '<leader>Sr', '<cmd>lua require("spectre").open_file_search(
   desc = 'Search on current file',
 })
 
--- config this myelf for a tree file visual
--- local setupNvimTree, nvimtree = pcall(require, "nvim-tree")
--- if not setupNvimTree then
---  return
--- end
--- vim.g.loaded = 1
--- vim.g.loaded_netrwPlugin = 1
--- nvimtree.setup()
--- require("nvim-tree").setup()
--- disable netrw at the very start of your init.lua
--- vim.g.loaded_netrw = 1
---  vim.g.loaded_netrwPlugin = 1
-
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
@@ -851,6 +838,8 @@ local on_attach = function(_, bufnr)
   }
 
   -- Gitsigns color scheme and highlighting
+  -- some stuff is commented out becuase I haven't found it useful yet
+  -- but maybe in the future I will want to get more granular
   -- ✅ Green for adds
   -- vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#81b88b' })
   -- vim.api.nvim_set_hl(0, 'GitSignsAddNr', { fg = '#81b88b' })
@@ -865,6 +854,7 @@ local on_attach = function(_, bufnr)
   -- vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#f85149' })
   -- vim.api.nvim_set_hl(0, 'GitSignsDeleteNr', { fg = '#f85149' })
   vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { bg = '#3f1d1d' })
+
   -- format on save
   -- commented out right now since it was way to slow
   -- vim.api.nvim_create_autocmd("BufWritePre", {
