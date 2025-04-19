@@ -112,6 +112,8 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
+  -- Display the neovim file tree history
+  { 'mbbill/undotree' },
 
   {
     -- Autocompletion
@@ -138,20 +140,21 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').add {
+        { '<leader>b', group = 'De[B]ugger', mode = { 'n', 'v' } },
         { '<leader>c', group = '[C]o-pilot / chrome', hidden = false, mode = { 'n', 'v' } },
         { '<leader>d', group = '[D]iagnostics', hidden = false, mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it file actions', mode = { 'n', 'v' } },
+        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
+        { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
+        { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
+        { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename', hidden = false },
         { '<leader>s', group = '[S]earch', hidden = false },
         { '<leader>S', group = '[S]pectre find and replace', hidden = false },
-        { '<leader>w', group = '[W]indows', hidden = false },
         { '<leader>t', group = '[T]oggle', hidden = false },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-        { '<leader>g', group = '[G]it file actions', mode = { 'n', 'v' } },
-        { '<leader>b', group = 'De[B]ugger', mode = { 'n', 'v' } },
-        { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
-        { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
-        { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
-        { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
+        { '<leader>u', group = '[U]ndotree', mode = { 'n', 'v' } },
+        { '<leader>w', group = '[W]indows', hidden = false },
       }
     end,
   },
@@ -906,6 +909,12 @@ require('telescope').load_extension 'harpoon'
 -- before setting up the servers.
 require('mason').setup()
 require('mason-lspconfig').setup()
+
+-- Undotree
+vim.keymap.set('n', '<leader>ut', ':UndotreeToggle<CR>', { desc = '[U]ndotree [T]oggle' })
+vim.keymap.set('n', '<leader>un', ':later 1<CR>', { desc = '[U]ndotree [N]ext' })
+vim.keymap.set('n', '<leader>up', ':earlier 1<CR>', { desc = '[U]ndotree [P]rev' })
+vim.keymap.set('n', '<leader>uf', ':later 99999<CR>', { desc = '[U]ndotree [F]irst' })
 
 -- setup toggleterm --
 require('toggleterm').setup {
