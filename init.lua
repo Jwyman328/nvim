@@ -200,11 +200,11 @@ require('lazy').setup({
     opts = {
       -- See `:help gitsigns.txt`
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
+        add = { text = '▌' },
+        change = { text = '▌' },
+        delete = { text = '▁' },
         topdelete = { text = '‾' },
-        changedelete = { text = '~' },
+        changedelete = { text = '▌' },
       },
       on_attach = function(bufnr)
         local gs = package.loaded.gitsigns
@@ -215,6 +215,21 @@ require('lazy').setup({
           vim.keymap.set(mode, l, r, opts)
         end
 
+        -- hunk highlight
+        vim.keymap.set('n', '<leader>hh', function()
+          local buf = vim.api.nvim_get_current_buf()
+
+          gs.toggle_linehl()
+          gs.toggle_numhl()
+          gs.toggle_word_diff()
+          -- Force GitSigns to detach and re-attach to apply the word_diff toggle
+          -- there is a bug where it is super slow for word_diff toggle
+          -- to work, this does the trick though as a workaround
+          require('gitsigns').detach(buf)
+          vim.defer_fn(function()
+            require('gitsigns').attach(buf)
+          end, 20)
+        end, { desc = 'Git [H]unk [H]ighlight toggle' })
         -- Navigation
         map({ 'n', 'v' }, '<leader>hn', function()
           if vim.wo.diff then
@@ -508,7 +523,7 @@ vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot
 vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
 
 -- Neotree keymaps
-vim.keymap.set('n', '<leader>nf', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
+vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
 vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
 vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
 
