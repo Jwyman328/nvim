@@ -849,6 +849,22 @@ local on_attach = function(_, bufnr)
       timeout_ms = 2000,
     },
   }
+
+  -- Gitsigns color scheme and highlighting
+  -- ✅ Green for adds
+  -- vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#81b88b' })
+  -- vim.api.nvim_set_hl(0, 'GitSignsAddNr', { fg = '#81b88b' })
+  vim.api.nvim_set_hl(0, 'GitSignsAddLn', { bg = '#133b23' })
+
+  -- 🔷 Blue for changes
+  -- vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#58a6ff' })
+  -- vim.api.nvim_set_hl(0, 'GitSignsChangeNr', { fg = '#58a6ff' })
+  vim.api.nvim_set_hl(0, 'GitSignsChangeLn', { bg = '#2a4365', fg = 'NONE' })
+
+  -- ❌ Red for deletes
+  -- vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#f85149' })
+  -- vim.api.nvim_set_hl(0, 'GitSignsDeleteNr', { fg = '#f85149' })
+  vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { bg = '#3f1d1d' })
   -- format on save
   -- commented out right now since it was way to slow
   -- vim.api.nvim_create_autocmd("BufWritePre", {
