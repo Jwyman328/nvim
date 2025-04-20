@@ -1260,5 +1260,8 @@ vim.api.nvim_create_autocmd('VimEnter', {
 vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
 
+-- ESC key is hard ot reach on my laptop, remap it to make it easier to move between vim modes
+vim.keymap.set({ 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
