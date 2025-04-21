@@ -297,6 +297,20 @@ require('lazy').setup({
       vim.cmd.colorscheme 'onedark'
     end,
   },
+  -- Highlight undo and redo code to help understand what is coming and going
+  -- with undos and redos.
+  {
+    'tzachar/highlight-undo.nvim',
+    opts = {
+      hlgroup = 'HighlightUndo',
+      duration = 300,
+      pattern = { '*' },
+      ignored_filetypes = { 'neo-tree', 'fugitive', 'TelescopePrompt', 'mason', 'lazy' },
+      -- ignore_cb is in comma as there is a default implementation. Setting
+      -- to nil will mean no default os called.
+      -- ignore_cb = nil,
+    },
+  },
 
   {
     -- Set lualine as statusline
@@ -1261,7 +1275,7 @@ vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = 
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
 
 -- ESC key is hard ot reach on my laptop, remap it to make it easier to move between vim modes
-vim.keymap.set({ 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
