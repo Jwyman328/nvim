@@ -990,7 +990,7 @@ vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
 
 -- Copilot related stuff
 require('CopilotChat').setup {
-  model = 'claude-3.7-sonnet',
+  model = 'gpt-5',
   window = {
     layout = 'float',
     width = 0.8, -- 60% of screen width
