@@ -541,7 +541,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>se', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>sr.', builtin.oldfiles_custom_display, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>sr.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = 'Search [B]uffers' })
@@ -1584,6 +1584,40 @@ vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close'
 
 -- ESC key is hard ot reach on my laptop, remap it to make it easier to move between vim modes
 vim.keymap.set({ 'n', 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
+
+local function hover_diag()
+  local params = vim.lsp.util.make_position_params(0, 'utf-16')
+  local results = vim.lsp.buf_request_sync(0, 'textDocument/hover', params, 500)
+  local lines = {}
+  for _, res in pairs(results or {}) do
+    local hover = res and res.result and res.result.contents
+    if hover then
+      local md = vim.lsp.util.convert_input_to_markdown_lines(hover)
+      if md and #md > 0 then
+        lines = md
+      end
+      break
+    end
+  end
+  local diags = vim.diagnostic.get(0, { lnum = params.position.line })
+  if #diags > 0 then
+    table.insert(lines, '')
+    local severity = { 'Error', 'Warn', 'Info', 'Hint' }
+    for _, d in ipairs(diags) do
+      table.insert(lines, string.format('%s: %s', severity[d.severity], d.message))
+    end
+  end
+  if #lines == 0 then
+    return
+  end
+  vim.lsp.util.open_floating_preview(lines, 'markdown', { border = 'rounded' })
+end
+
+vim.keymap.set('n', 'K', hover_diag, { desc = 'Hover + diagnostics' })
+
+vim.keymap.set('n', '<leader>do', function()
+  vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
+end, { desc = 'Hover diagnostics' })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
