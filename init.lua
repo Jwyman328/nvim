@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -140,6 +140,9 @@ vim.o.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.o.splitright = true
 vim.o.splitbelow = true
+
+-- Set highlight on search
+vim.o.hlsearch = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
@@ -271,18 +274,110 @@ require('lazy').setup({
   -- options to `gitsigns.nvim`.
   --
   -- See `:help gitsigns` to understand what the configuration keys do
-  { -- Adds git related signs to the gutter, as well as utilities for managing changes
+  {
+    -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
+      -- See `:help gitsigns.txt`
       signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
+        add = { text = '▌' },
+        change = { text = '▌' },
+        delete = { text = '▁' },
         topdelete = { text = '‾' },
-        changedelete = { text = '~' },
+        changedelete = { text = '▌' },
       },
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- hunk highlight
+        vim.keymap.set('n', '<leader>hh', function()
+          local buf = vim.api.nvim_get_current_buf()
+
+          gs.toggle_linehl()
+          gs.toggle_numhl()
+          gs.toggle_word_diff()
+          -- Force GitSigns to detach and re-attach to apply the word_diff toggle
+          -- there is a bug where it is super slow for word_diff toggle
+          -- to work, this does the trick though as a workaround
+          require('gitsigns').detach(buf)
+          vim.defer_fn(function()
+            require('gitsigns').attach(buf)
+          end, 20)
+        end, { desc = 'Git [H]unk [H]ighlight toggle' })
+        -- Navigation
+        map({ 'n', 'v' }, '<leader>hn', function()
+          if vim.wo.diff then
+            return ']c'
+          end
+          vim.schedule(function()
+            gs.next_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to next hunk' })
+
+        map({ 'n', 'v' }, '<leader>hp', function()
+          if vim.wo.diff then
+            return '[c'
+          end
+          vim.schedule(function()
+            gs.prev_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to previous hunk' })
+
+        -- Actions
+        -- visual mode
+        map('v', '<leader>hs', function()
+          gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'stage git hunk' })
+        map('v', '<leader>hr', function()
+          gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+        end, { desc = 'reset git hunk' })
+        -- normal mode
+        map('n', '<leader>hl', ':Gitsigns setloclist<CR>', { desc = 'git hunk list' })
+        -- not sure what these do so commenting out for now
+        -- map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        -- map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        -- map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        -- map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        -- map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        -- map('n', '<leader>hv', gs.preview_hunk, { desc = 'git hunk visualize' })
+        map('n', '<leader>hb', function()
+          gs.blame_line { full = false }
+        end, { desc = 'git blame line' })
+        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+        map('n', '<leader>hD', function()
+          gs.diffthis '~'
+        end, { desc = 'git diff against last commit' })
+
+        -- Toggles
+        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+      end,
     },
   },
+
+  -- Git related plugins
+  'tpope/vim-fugitive',
+
+  'tpope/vim-rhubarb',
+  -- find and replace plugin
+  'nvim-lua/plenary.nvim',
+  'nvim-pack/nvim-spectre',
+  -- surround enter and delete key bindings
+  'tpope/vim-surround',
+
+  -- Display the neovim file tree history
+  { 'mbbill/undotree' },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -344,9 +439,21 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]oggle' },
+        { '<leader>b', group = 'De[B]ugger', mode = { 'n', 'v' } },
+        { '<leader>c', group = '[C]o-pilot / chrome', hidden = false, mode = { 'n', 'v' } },
+        { '<leader>d', group = '[D]iagnostics', hidden = false, mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it file actions', mode = { 'n', 'v' } },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
+        { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
+        { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
+        { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
+        { '<leader>r', group = '[R]ename', hidden = false },
+        { '<leader>s', group = '[S]earch', hidden = false },
+        { '<leader>S', group = '[S]pectre find and replace', hidden = false },
+        { '<leader>t', group = '[T]oggle', hidden = false },
+        { '<leader>u', group = '[U]ndotree', mode = { 'n', 'v' } },
+        { '<leader>w', group = '[W]indows', hidden = false },
       },
     },
   },
@@ -433,9 +540,24 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>se', builtin.resume, { desc = '[S]earch [R]esume' })
+      vim.keymap.set('n', '<leader>sr.', builtin.oldfiles_custom_display, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = 'Search [B]uffers' })
+      vim.keymap.set('n', '<leader>si', function()
+        -- You can pass additional configuration to telescope to change theme, layout, etc.
+        require('telescope.builtin').current_buffer_fuzzy_find {
+          layout_strategy = 'horizontal',
+          layout_config = {
+            width = 0.9,
+            height = 0.4,
+            prompt_position = 'top',
+          },
+          sorting_strategy = 'ascending',
+          previewer = false,
+        }
+      end, { desc = '[S]earch [I]nside current buffer Fuzzily' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -461,6 +583,126 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
+
+  -- for git diff viewing
+  {
+    'sindrets/diffview.nvim',
+    opts = {},
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewToggleFiles', 'DiffviewFocusFiles' },
+    keys = {
+      { '<leader>gb', '<cmd>DiffviewOpen<CR>', desc = 'Open Diffview (HEAD vs current)' },
+      { '<leader>gq', '<cmd>DiffviewClose<CR>', desc = 'Close Diffview' },
+    },
+  },
+
+  -- plugin for sidebar file tree
+  -- {
+  --   'nvim-neo-tree/neo-tree.nvim',
+  -- },
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      'nvim-tree/nvim-web-devicons', -- optional, but recommended
+    },
+    lazy = false, -- neo-tree will lazily load itself
+
+    opts = {
+      filesystem = {
+        follow_current_file = {
+          enabled = true, -- This will find and focus the file in the active buffer every time
+          --               -- the current file is changed while the tree is open.
+          leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+        },
+        filtered_items = {
+          visible = true,
+          show_hidden_count = true,
+          hide_dotfiles = false,
+          hide_gitignored = true,
+          hide_by_name = {
+            -- '.git',
+            -- '.DS_Store',
+            -- 'thumbs.db',
+          },
+          never_show = {},
+        },
+      },
+    },
+  },
+  -- amongst your other plugins
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
+
+  {
+    -- Set lualine as statusline
+    'nvim-lualine/lualine.nvim',
+    -- See `:help lualine.txt`
+    opts = {
+      options = {
+        icons_enabled = false,
+        theme = 'onedark',
+        component_separators = '|',
+        section_separators = '',
+      },
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch' },
+        lualine_c = {
+          {
+            'filename',
+            path = 1, -- 0 = filename, 1 = relative path, 2 = absolute path
+          },
+        },
+        lualine_x = {},
+        -- lualine_y = { 'progress' },
+        -- lualine_z = { 'location' },
+      },
+    },
+  },
+  {
+    -- Add indentation guides even on blank lines
+    'lukas-reineke/indent-blankline.nvim',
+    -- Enable `lukas-reineke/indent-blankline.nvim`
+    -- See `:help ibl`
+    main = 'ibl',
+    opts = {},
+  },
+  -- "gc" to comment visual regions/lines
+  { 'numToStr/Comment.nvim', opts = {} },
+
+  -- set up copilot
+  --
+  -- { 'github/copilot.vim',      opts = {} },
+  -- -- copilot chat
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    branch = 'main',
+    dependencies = {
+      { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
+      { 'nvim-lua/plenary.nvim' }, -- for curl, log wrapper
+    },
+    build = 'make tiktoken', -- Only on MacOS or Linux
+    opts = {
+      -- See Configuration section for options
+    },
+    -- See Commands section for default commands if you want to lazy load on them
+  },
+
+  -- packages for debuggers
+  -- initially for react and python debugging
+  'mfussenegger/nvim-dap',
+  'nvim-neotest/nvim-nio',
+  'rcarriga/nvim-dap-ui',
+  'theHamsta/nvim-dap-virtual-text',
+
+  'antoinemadec/FixCursorHold.nvim',
+  'nvim-neotest/neotest',
+  'marilari88/neotest-vitest',
+  'mxsdev/nvim-dap-vscode-js',
+
+  { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim', opts = {} },
 
   -- LSP Plugins
   {
@@ -491,6 +733,11 @@ require('lazy').setup({
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
+    },
+    opts = {
+      diagnostics = {
+        virtual_text = false,
+      },
     },
     config = function()
       -- Brief aside: **What is LSP?**
@@ -544,20 +791,24 @@ require('lazy').setup({
           map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
 
           -- Find references for the word under your cursor.
-          map('grr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gri', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('grd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+
+          -- See `:help K` for why this keymap
+          map('K', vim.lsp.buf.hover, 'Hover Documentation')
+          map('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
@@ -570,7 +821,7 @@ require('lazy').setup({
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
+          map('gt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -673,8 +924,8 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -683,6 +934,8 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        --
+        html = { filetypes = { 'html', 'twig', 'hbs' } },
 
         lua_ls = {
           -- cmd = { ... },
@@ -963,6 +1216,20 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  -- Highlight undo and redo code to help understand what is coming and going
+  -- with undos and redos.
+  {
+    'tzachar/highlight-undo.nvim',
+    opts = {
+      hlgroup = 'HighlightUndo',
+      duration = 300,
+      pattern = { '*' },
+      ignored_filetypes = { 'neo-tree', 'fugitive', 'TelescopePrompt', 'mason', 'lazy' },
+      -- ignore_cb is in comma as there is a default implementation. Setting
+      -- to nil will mean no default os called.
+      -- ignore_cb = nil,
+    },
+  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1012,5 +1279,311 @@ require('lazy').setup({
   },
 })
 
+-- Starting personal additions
+-- setup toggleterm --
+require('toggleterm').setup {
+  -- size can be a number or function which is passed the current terminal
+  size = 13,
+  open_mapping = [[<c-t>]],
+  hide_numbers = true, -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  autochdir = false, -- when neovim changes it current directory the terminal will change it's own when next it's opened
+  shade_terminals = true, -- NOTE: this option takes priority over highlights specified so if you specify Normal highlights you should set this to false
+  shading_factor = 2, -- the percentage by which to lighten terminal background, default: -30 (gets multiplied by -3 if background is light)
+  start_in_insert = true,
+  insert_mappings = true, -- whether or not the open mapping applies in insert mode
+  terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
+  persist_size = true,
+  persist_mode = true, -- if set to true (default) the previous terminal mode will be remembered
+  direction = 'float', -- 'vertical' | 'horizontal' | 'tab' | 'float',
+  close_on_exit = true, -- close the terminal window when the process exits
+  -- Change the default shell. Can be a string or a function returning a string
+  shell = vim.o.shell,
+  auto_scroll = true, -- automatically scroll to the bottom on terminal output
+  -- This field is only relevant if direction is set to 'float'
+  float_opts = {
+    border = 'curved',
+    winblend = 0,
+    highlights = {
+      border = 'Normal',
+      background = 'Normal',
+    },
+  },
+}
+
+-- formating / linting
+require('conform').setup {
+  formatters_by_ft = {
+    lua = { 'stylua' },
+    -- Conform will run multiple formatters sequentially
+    python = { 'ruff', 'black' },
+    -- Use a sub-list to run only the first available formatter
+    javascript = { 'prettier' },
+    typescript = { 'prettier' },
+    javascriptreact = { 'prettier' },
+    typescriptreact = { 'prettier' },
+  },
+  format_on_save = {
+    lsp_fallback = true,
+    async = false,
+    timeout_ms = 2000,
+  },
+}
+
+-- Gitsigns color scheme and highlighting
+-- some stuff is commented out becuase I haven't found it useful yet
+-- but maybe in the future I will want to get more granular
+-- ✅ Green for adds
+-- vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#81b88b' })
+-- vim.api.nvim_set_hl(0, 'GitSignsAddNr', { fg = '#81b88b' })
+vim.api.nvim_set_hl(0, 'GitSignsAddLn', { bg = '#133b23' })
+
+-- 🔷 Blue for changes
+-- vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#58a6ff' })
+-- vim.api.nvim_set_hl(0, 'GitSignsChangeNr', { fg = '#58a6ff' })
+vim.api.nvim_set_hl(0, 'GitSignsChangeLn', { bg = '#2a4365', fg = 'NONE' })
+
+-- ❌ Red for deletes
+-- vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#f85149' })
+-- vim.api.nvim_set_hl(0, 'GitSignsDeleteNr', { fg = '#f85149' })
+vim.api.nvim_set_hl(0, 'GitSignsDeleteLn', { bg = '#3f1d1d' })
+
+-- format on save
+-- commented out right now since it was way to slow
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--  pattern = "*",
+--  callback = function(args)
+--    require("conform").format({ bufnr = args.buf })
+--  end,
+-- })
+-- format on f
+vim.keymap.set({ 'n', 'v' }, '<leader>f', function()
+  require('conform').format()
+end, { desc = 'Format file or range (in visual mode)' })
+
+-- this is so that it is easier to leave the terminal mode
+vim.api.nvim_set_keymap('t', '<Leader><ESC>', '<C-\\><C-n>', { noremap = true })
+
+-- Undotree
+vim.keymap.set('n', '<leader>ut', ':UndotreeToggle<CR>', { desc = '[U]ndotree [T]oggle' })
+vim.keymap.set('n', '<leader>un', ':later 1<CR>', { desc = '[U]ndotree [N]ext' })
+vim.keymap.set('n', '<leader>up', ':earlier 1<CR>', { desc = '[U]ndotree [P]rev' })
+vim.keymap.set('n', '<leader>uf', ':later 99999<CR>', { desc = '[U]ndotree [F]irst' })
+
+-- Fugitive mappings
+vim.keymap.set('n', '<leader>gs', ':Gwrite<CR>', { desc = 'Git stage current file' })
+vim.keymap.set('n', '<leader>gr', ':!git restore --staged %<CR>', {
+  desc = 'Git  reverse aka unstage current file',
+  silent = true,
+})
+vim.api.nvim_set_keymap('n', '<leader>gS', ':Git<CR>', { noremap = true, silent = true, desc = 'Git status' })
+vim.api.nvim_set_keymap('n', '<leader>gh', ':0GcLog<CR>', { noremap = true, silent = true, desc = 'Git commit log' })
+vim.api.nvim_set_keymap(
+  'n',
+  '<leader>gf',
+  ':Gvdiffsplit HEAD<CR>',
+  { noremap = true, silent = true, desc = 'Git diff current file to previous file commit (includes staged and unstaged)' }
+)
+
+vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
+  noremap = true,
+  silent = true,
+  desc = 'Git diff: unstaged changes only vs previous commit and current staged changes',
+})
+
+-- Copilot related stuff
+require('CopilotChat').setup {
+  model = 'gpt-5',
+  window = {
+    layout = 'float',
+    width = 0.8, -- 60% of screen width
+    height = 0.8, -- 70% of screen height
+  },
+}
+
+-- Quickfix list
+-- Map keys to quickly navigate and open the quickfix list
+vim.api.nvim_set_keymap('n', '<leader>qo', ':copen<CR>', { noremap = true, silent = true, desc = 'Quickfix list open' })
+-- add close_quickfix function here
+vim.api.nvim_set_keymap('n', '<leader>qc', ':cclose<CR>', { noremap = true, silent = true, desc = 'Quickfix list close' })
+vim.api.nvim_set_keymap('n', '<leader>qn', ':cnext<CR>', { noremap = true, silent = true, desc = 'Quickfix next' })
+vim.api.nvim_set_keymap('n', '<leader>qp', ':cprev<CR>', { noremap = true, silent = true, desc = 'Quickfix prev' })
+vim.api.nvim_set_keymap('n', '<leader>qf', ':cfirst<CR>', { noremap = true, silent = true, desc = 'Quickfix first' })
+vim.api.nvim_set_keymap('n', '<leader>ql', ':clast<CR>', { noremap = true, silent = true, desc = 'Quickfix last' })
+-- Empty the quickfix list
+vim.keymap.set('n', '<leader>qe', function()
+  vim.fn.setqflist({}, 'r')
+  vim.cmd 'cclose'
+end, { desc = 'Quickfix empty and close' })
+
+-- copilot chat keymap
+vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
+vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
+vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
+
+-- Stuff for setting up debugging react and python?
+-- require('dapui').setup()
+-- require('nvim-dap-virtual-text').setup {}
+-- -- require('neotest').setup { {} }
+--
+-- vim.keymap.set('n', '<leader>bu', ":lua require('dapui').open()<CR>", { desc = 'Bugger ui' })
+-- vim.keymap.set('n', '<leader>bc', ":lua require('dapui').close()<CR>", { desc = 'Bugger ui close' })
+-- vim.keymap.set('n', '<leader>bt', ":lua require('dapui').toggle()<CR>", { desc = 'Bugger toggle' })
+--
+-- vim.keymap.set('n', '<leader>bs', ":lua require('dap').toggle_breakpoint()<CR>")
+-- vim.keymap.set('n', '<leader>br', ":lua require('dap').step_over()<CR>")
+-- vim.keymap.set('n', '<leader>bi', ":lua require('dap').step_into()<CR>")
+-- -- If the debugger hasn’t started yet — it starts the debug session
+-- -- If the debugger is already running and paused — it resumes execution
+-- vim.keymap.set('n', '<leader>br', ":lua require('dap').continue()<CR>", { desc = 'Bugger run/continue' })
+--
+-- vim.keymap.set('n', '<leader>bd', ":lua require('neotest').run.run({strategy='dap'})<CR>")
+--
+-- local js_based_languages = {
+--   'typescript',
+--   'javascript',
+--   'typescriptreact',
+--   'javascriptreact',
+-- }
+--
+-- local install_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter'
+-- local vscode_js_debug_path = install_path
+--
+-- -- attaching to an existing chrome doesn't work since
+-- -- it has to be in debug mode
+-- -- also using the dap config to launch chrome doesn't work well
+-- -- it is always so slow, therefore this function below allows me to easily launch
+-- -- chrome in debug mode so that I can attach to it.
+-- local function launch_chrome_debug()
+--   local chrome_cmd = [[
+--     /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+--     --remote-debugging-port=9222 \
+--     --user-data-dir=/tmp/chrome-debug-profile
+--   ]]
+--   -- Launch Chrome in the background
+--   vim.fn.jobstart(chrome_cmd, {
+--     detach = true,
+--   })
+--   print '🚀 Chrome launched with debugging port 9222.'
+-- end
+--
+-- vim.keymap.set('n', '<leader>cl', launch_chrome_debug, { desc = 'Chrome launch' })
+
+-- comment out sincen ot working for 0.11.0 neovim
+-- require('dap-vscode-js').setup {
+--   node_path: function{},
+--   debugger_path = vscode_js_debug_path,
+--   adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost', 'python' }, -- which adapters to register in nvim-dap
+-- }
+
+-- local dap = require 'dap'
+-- for _, language in ipairs(js_based_languages) do
+--   dap.configurations[language] = {
+--     -- Debug single nodejs files
+--     {
+--       type = 'pwa-node',
+--       request = 'launch',
+--       name = 'Launch file',
+--       program = '${file}',
+--       cwd = vim.fn.getcwd(),
+--       sourceMaps = true,
+--     },
+--     {
+--       type = 'pwa-chrome',
+--       request = 'launch',
+--       name = 'Launch Chrome',
+--       webRoot = '${workspaceFolder}/src',
+--       cwd = vim.fn.getcwd(),
+--       url = 'https://localhost:3030',
+--       sourceMaps = true,
+--       skipFiles = {
+--         '<node_internals>/**',
+--         '**/node_modules/**',
+--       },
+--     },
+--     -- attach to chrome that is opened in debug mode on port 9222
+--     -- look at function above function launch_chrome_debug
+--     -- for how to launch chrome debug correctly.
+--     -- use this one for most success
+--     {
+--       type = 'pwa-chrome',
+--       request = 'attach',
+--       name = 'Attach to Chrome (React) (best option), run after launch_chrome_debug',
+--       webRoot = '${workspaceFolder}/src',
+--       cwd = vim.fn.getcwd(),
+--       port = 9222, -- Must match the port from step 1
+--
+--       url = 'https://localhost:3030',
+--       sourceMaps = true,
+--       -- userDataDir = false, -- ⬅️ use existing Chrome profile
+--     },
+--     {
+--
+--       type = 'python',
+--       request = 'attach',
+--       name = 'attach python',
+--       connect = {
+--         host = 'localhost',
+--         port = 5678,
+--       },
+--       pathMappings = {
+--         {
+--           localRoot = '${workspaceFolder}',
+--           remoteRoot = '.',
+--         },
+--       },
+--     },
+--   }
+-- end
+-- dap.adapters['pwa-node'] = {
+--   type = 'server',
+--   host = 'localhost',
+--   port = '${port}',
+--   executable = {
+--     command = 'node',
+--     args = {
+--       vscode_js_debug_path .. '/js-debug/src/dapDebugServer.js',
+--       '${port}',
+--     },
+--   },
+-- }
+-- dap.adapters['pwa-chrome'] = {
+--   type = 'server',
+--   host = 'localhost',
+--   port = '${port}',
+--   executable = {
+--     command = 'node',
+--     args = {
+--       vscode_js_debug_path .. '/js-debug/src/dapDebugServer.js',
+--       '${port}',
+--     },
+--   },
+-- }
+--
+-- dap.adapters['python'] = {
+--   type = 'server',
+--   host = 'localhost',
+--   port = 5678,
+-- }
+-- end of debugging stuff
+--
+
+-- Auto run :Neotree when Neovim starts
+vim.api.nvim_create_autocmd('VimEnter', {
+  pattern = '*',
+  command = 'Neotree',
+})
+-- Simple keymap for current windows
+vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
+vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
+
+-- Neotree keymaps
+vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
+vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
+vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
+
+-- ESC key is hard ot reach on my laptop, remap it to make it easier to move between vim modes
+vim.keymap.set({ 'n', 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+--
