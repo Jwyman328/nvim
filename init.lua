@@ -674,8 +674,11 @@ require('lazy').setup({
 
   -- set up copilot
   --
-  -- { 'github/copilot.vim',      opts = {} },
-  -- -- copilot chat
+  {
+    'github/copilot.vim',
+    event = 'InsertEnter', -- lazy-load when you start typing
+  },
+  -- Copilot chat
   {
     'CopilotC-Nvim/CopilotChat.nvim',
     branch = 'main',
@@ -1129,25 +1132,13 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  -- Set the color scheme
+  {
+    -- Theme inspired by Atom
+    'navarasu/onedark.nvim',
+    priority = 1000,
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'onedark'
     end,
   },
 
@@ -1420,6 +1411,22 @@ end, { desc = 'Quickfix empty and close' })
 vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
 vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
 vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
+-- Toggle Copilot globally
+vim.keymap.set('n', '<leader>ce', ':Copilot enable<CR>', { desc = 'Enable Copilot' })
+vim.keymap.set('n', '<leader>cd', ':Copilot disable<CR>', { desc = 'Disable Copilot' })
+-- dont use tab for autocomplete since it conflicts with other things
+vim.g.copilot_no_tab_map = true
+-- Accept Copilot suggestion with Ctrl+L (or choose your own)
+vim.keymap.set('i', '<leader>ca', 'copilot#Accept("<CR>")', {
+  expr = true,
+  replace_keycodes = false,
+  desc = 'Accept Copilot suggestion',
+})
+-- Cycle through Copilot suggestions
+vim.keymap.set('i', '<leader>cn', '<Plug>(copilot-next)', { desc = 'copilot next suggestion' })
+vim.keymap.set('i', '<leader>cp', '<Plug>(copilot-previous)', { desc = 'copilot previous suggestion' })
+-- Dismiss suggestion
+vim.keymap.set('i', '<leader>cr', '<Plug>(copilot-dismiss)', { desc = 'Copilot remove suggestion' })
 
 -- Stuff for setting up debugging react and python?
 -- require('dapui').setup()
