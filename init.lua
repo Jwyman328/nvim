@@ -1417,16 +1417,16 @@ vim.keymap.set('n', '<leader>cd', ':Copilot disable<CR>', { desc = 'Disable Copi
 -- dont use tab for autocomplete since it conflicts with other things
 vim.g.copilot_no_tab_map = true
 -- Accept Copilot suggestion with Ctrl+L (or choose your own)
-vim.keymap.set('i', '<leader>ca', 'copilot#Accept("<CR>")', {
+vim.keymap.set('i', '<Tab>y', 'copilot#Accept("<CR>")', {
   expr = true,
   replace_keycodes = false,
-  desc = 'Accept Copilot suggestion',
+  desc = 'Accept Copilot suggestion (Tab y)',
 })
 -- Cycle through Copilot suggestions
-vim.keymap.set('i', '<leader>cn', '<Plug>(copilot-next)', { desc = 'copilot next suggestion' })
-vim.keymap.set('i', '<leader>cp', '<Plug>(copilot-previous)', { desc = 'copilot previous suggestion' })
+vim.keymap.set('i', '<Tab>n', '<Plug>(copilot-next)', { desc = 'copilot next suggestion' })
+vim.keymap.set('i', '<Tab>p', '<Plug>(copilot-previous)', { desc = 'copilot previous suggestion' })
 -- Dismiss suggestion
-vim.keymap.set('i', '<leader>cr', '<Plug>(copilot-dismiss)', { desc = 'Copilot remove suggestion' })
+vim.keymap.set('i', '<Tab>r', '<Plug>(copilot-dismiss)', { desc = 'Copilot remove suggestion' })
 
 -- Stuff for setting up debugging react and python?
 -- require('dapui').setup()
@@ -1583,6 +1583,12 @@ vim.api.nvim_create_autocmd('VimEnter', {
 -- Simple keymap for current windows
 vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
+-- window quit
+vim.keymap.set('n', '<leader>wq', '<cmd>q<CR>', { desc = '[W]indow [Q]uit' })
+-- Or force quit:
+vim.keymap.set('n', '<leader>wf', '<cmd>q!<CR>', { desc = '[W]indow [F]orce quit' })
+-- Quit all:
+vim.keymap.set('n', '<leader>wQ', '<cmd>qa<CR>', { desc = '[W]indow [Q]uit all' })
 
 -- Neotree keymaps
 vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
