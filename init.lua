@@ -539,6 +539,15 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+
+      -- Literal (fixed-string) interactive grep via Telescope prompt
+      vim.keymap.set('n', '<leader>sF', function()
+        builtin.live_grep {
+          additional_args = function()
+            return { '--fixed-strings' }
+          end,
+        }
+      end, { desc = '[S]earch [F]ixed literal (no regex)' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>se', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>sr.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
