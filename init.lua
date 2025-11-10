@@ -1099,6 +1099,10 @@ require('lazy').setup({
         -- <c-e>: Hide menu
         -- <c-k>: Toggle signature help
         --
+        --
+        -- Accept currently selected item; if none selected, fallback to newline
+        -- return key to accept suggestion
+        ['<CR>'] = { 'accept', 'fallback' },
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
 
