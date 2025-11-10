@@ -1604,6 +1604,21 @@ vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree g
 vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
 vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
 
+-- find and replace open
+vim.keymap.set('n', '<leader>r', ':%s/', { desc = 'Neotree close' })
+-- Normal mode: Substitute commands for each magic level
+vim.keymap.set('n', '<leader>rv', ':%s/\\v', { desc = 'Substitute (\\v very magic)' }) -- best fro regex
+vim.keymap.set('n', '<leader>rm', ':%s/\\m', { desc = 'Substitute (\\m magic)' })
+vim.keymap.set('n', '<leader>rn', ':%s/\\M', { desc = 'Substitute (\\M nomagic)' })
+vim.keymap.set('n', '<leader>rr', ':%s/\\V', { desc = 'Substitute (\\V very nomagic) replace raw' })
+
+-- Normal mode: Search only (not substitute)
+-- TODO maybe have search mode with different levels of magic
+-- vim.keymap.set('n', '<leader>/v', '/\\v', { desc = 'Search (\\v very magic)' })
+-- vim.keymap.set('n', '<leader>/m', '/\\m', { desc = 'Search (\\m magic)' })
+-- vim.keymap.set('n', '<leader>/M', '/\\M', { desc = 'Search (\\M nomagic)' })
+-- vim.keymap.set('n', '<leader>/V', '/\\V', { desc = 'Search (\\V very nomagic)' })
+
 -- ESC key is hard ot reach on my laptop, remap it to make it easier to move between vim modes
 vim.keymap.set({ 'n', 'v', 'i' }, '<leader>wn', '<Esc>', { desc = '[W]indow [N]ormal mode', noremap = true, silent = true })
 
