@@ -197,10 +197,34 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+local function vscode_or_nvim(vs_cmd, nvim_cmd)
+  return function()
+    if vim.g.vscode then
+      vim.fn.VSCodeCall(vs_cmd)
+    else
+      vim.cmd(nvim_cmd)
+    end
+  end
+end
+
+local function open_first()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'workbench.action.focusEditorGroupAtIndex1'
+  else
+    vim.cmd 'wincmd l'
+  end
+end
+
+vim.keymap.set('n', '<C-w>f', open_first)
+
+vim.keymap.set('n', '<C-w>h', vscode_or_nvim('workbench.action.focusLeftGroup', 'wincmd h'), { desc = 'Move focus left' })
+
+vim.keymap.set('n', '<C-w>l', vscode_or_nvim('workbench.action.focusRightGroup', 'wincmd l'), { desc = 'Move focus right' })
+
+vim.keymap.set('n', '<C-w>j', vscode_or_nvim('workbench.action.focusBelowGroup', 'wincmd j'), { desc = 'Move focus down' })
+
+vim.keymap.set('n', '<C-w>k', vscode_or_nvim('workbench.action.focusAboveGroup', 'wincmd k'), { desc = 'Move focus up' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -535,19 +559,31 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+
+      vim.keymap.set('n', '<leader>sf', function()
+        if vim.g.vscode then
+          vim.fn.VSCodeCall 'workbench.action.quickOpen'
+        else
+          builtin.find_files()
+        end
+      end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
 
       -- Literal (fixed-string) interactive grep via Telescope prompt
       vim.keymap.set('n', '<leader>sF', function()
-        builtin.live_grep {
-          additional_args = function()
-            return { '--fixed-strings' }
-          end,
-        }
+        if vim.g.vscode then
+          vim.fn.VSCodeCall 'workbench.action.findInFiles'
+        else
+          builtin.live_grep {
+            additional_args = function()
+              return { '--fixed-strings' }
+            end,
+          }
+        end
       end, { desc = '[S]earch [F]ixed literal (no regex)' })
+
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>se', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>sr.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -1397,7 +1433,7 @@ vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
 
 -- Copilot related stuff
 require('CopilotChat').setup {
-  model = 'gpt-5',
+  model = 'gpt-4',
   window = {
     layout = 'float',
     width = 0.8, -- 60% of screen width
@@ -1421,7 +1457,24 @@ vim.keymap.set('n', '<leader>qe', function()
 end, { desc = 'Quickfix empty and close' })
 
 -- copilot chat keymap
-vim.keymap.set('n', '<leader>co', ':CopilotChatOpen<CR>', { desc = 'Open Copilot Chat' })
+local function ai_chat_action()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'aichat.newchataction'
+  else
+    vim.cmd 'CopilotChatOpen'
+  end
+end
+
+local function ai_chat_close()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'aichat.close-sidebar'
+  else
+    vim.cmd 'CopilotChatReset'
+  end
+end
+
+vim.keymap.set('n', '<leader>co', ai_chat_action, { desc = 'Open Copilot Chat' })
+vim.keymap.set('n', '<leader>cc', ai_chat_close, { desc = 'Close Copilot Chat' })
 vim.keymap.set('n', '<leader>cs', ':CopilotChatStop<CR>', { desc = 'Stop Copilot Chat' })
 vim.keymap.set('n', '<leader>cr', ':CopilotChatReset<CR>', { desc = 'Stop Copilot reset' })
 -- Toggle Copilot globally
@@ -1597,7 +1650,14 @@ vim.api.nvim_create_autocmd('VimEnter', {
 vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
 -- window quit
-vim.keymap.set('n', '<leader>wq', '<cmd>q<CR>', { desc = '[W]indow [Q]uit' })
+vim.keymap.set('n', '<leader>wq', function()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'workbench.action.closeActiveEditor'
+  else
+    vim.cmd 'q'
+  end
+end, { desc = '[W]indow [Q]uit' })
+
 -- Or force quit:
 vim.keymap.set('n', '<leader>wf', '<cmd>q!<CR>', { desc = '[W]indow [F]orce quit' })
 -- Quit all:
@@ -1605,8 +1665,25 @@ vim.keymap.set('n', '<leader>wQ', '<cmd>qa<CR>', { desc = '[W]indow [Q]uit all' 
 
 -- Neotree keymaps
 vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
-vim.keymap.set('n', '<leader>no', ':Neotree <CR>', { desc = 'Neotree open' })
-vim.keymap.set('n', '<leader>nc', ':Neotree close<CR>', { desc = 'Neotree close' })
+
+local function neotree_open()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'workbench.action.focusSideBar'
+  else
+    vim.cmd 'Neotree'
+  end
+end
+
+local function neotree_close()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'workbench.action.closeSidebar'
+  else
+    vim.cmd 'Neotree close'
+  end
+end
+
+vim.keymap.set('n', '<leader>no', neotree_open, { desc = 'Neotree open' })
+vim.keymap.set('n', '<leader>nc', neotree_close, { desc = 'Neotree close' })
 
 -- find and replace open
 vim.keymap.set('n', '<leader>r', ':%s/', { desc = 'Neotree close' })
@@ -1659,6 +1736,7 @@ vim.keymap.set('n', 'K', hover_diag, { desc = 'Hover + diagnostics' })
 vim.keymap.set('n', '<leader>do', function()
   vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
 end, { desc = 'Hover diagnostics' })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
