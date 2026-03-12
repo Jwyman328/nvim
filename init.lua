@@ -1665,6 +1665,7 @@ vim.keymap.set('n', '<leader>wQ', '<cmd>qa<CR>', { desc = '[W]indow [Q]uit all' 
 
 -- Neotree keymaps
 vim.keymap.set('n', '<leader>ng', ':Neotree git_status<CR>', { desc = 'Neotree git files' })
+vim.keymap.set('n', '<leader>nr', ':e<CR>', { desc = 'Neotree refresh file' })
 
 local function neotree_open()
   if vim.g.vscode then
@@ -1735,6 +1736,14 @@ vim.keymap.set('n', 'K', hover_diag, { desc = 'Hover + diagnostics' })
 
 vim.keymap.set('n', '<leader>do', function()
   vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
+end, { desc = 'Hover diagnostics' })
+
+vim.keymap.set('n', '<leader>do', function()
+  if vim.g.vscode then
+    vim.fn.VSCodeCall 'editor.action.showHover'
+  else
+    vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
+  end
 end, { desc = 'Hover diagnostics' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
