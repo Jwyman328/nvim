@@ -1649,6 +1649,8 @@ vim.api.nvim_create_autocmd('VimEnter', {
 -- Simple keymap for current windows
 vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
+-- window split
+vim.api.nvim_set_keymap('n', '<leader>ws', ':vs<CR>', { noremap = true, silent = true, desc = '[W]indow [S]plit' })
 -- window quit
 vim.keymap.set('n', '<leader>wq', function()
   if vim.g.vscode then
