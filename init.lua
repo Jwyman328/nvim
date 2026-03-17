@@ -164,6 +164,8 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+vim.o.wrap = true
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -1433,7 +1435,7 @@ vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
 
 -- Copilot related stuff
 require('CopilotChat').setup {
-  model = 'gpt-4',
+  model = 'gpt-4o',
   window = {
     layout = 'float',
     width = 0.8, -- 60% of screen width
@@ -1747,6 +1749,9 @@ vim.keymap.set('n', '<leader>do', function()
     vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
   end
 end, { desc = 'Hover diagnostics' })
+
+-- toggle spell check
+vim.keymap.set('n', '<leader>ts', ':set spell!<CR>', { noremap = true, silent = true, desc = '[T]oggle [S]pell' })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
