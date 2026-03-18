@@ -589,8 +589,67 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>se', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>sr.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
+      -- Buffer hotkeys
+      vim.keymap.set('n', '<leader>ba', builtin.buffers, { desc = '[B]uffer [A]ll Find existing buffers' })
+      vim.keymap.set('n', '<leader>bd', ':bd<CR>', { desc = '[B]uffer [D]elete' })
+
+      -- 🚩 Custom Telescope Picker: Unsaved (Modified) Buffers
+      local pickers = require 'telescope.pickers'
+      local finders = require 'telescope.finders'
+      local sorters = require 'telescope.sorters'
+      local actions = require 'telescope.actions'
+      local action_state = require 'telescope.actions.state'
+
+      local function modified_buffers_picker()
+        local buffers = {}
+        for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.api.nvim_buf_is_loaded(bufnr) and vim.bo[bufnr].modified then
+            local name = vim.api.nvim_buf_get_name(bufnr)
+            if name == '' then
+              name = '[No Name]'
+            end
+            table.insert(buffers, {
+              display = name,
+              bufnr = bufnr,
+            })
+          end
+        end
+
+        if vim.tbl_isempty(buffers) then
+          vim.notify('No unsaved buffers found!', vim.log.levels.INFO)
+          return
+        end
+
+        pickers
+          .new({}, {
+            prompt_title = 'Modified Buffers',
+            finder = finders.new_table {
+              results = buffers,
+              entry_maker = function(entry)
+                return {
+                  value = entry.bufnr,
+                  display = entry.display,
+                  ordinal = entry.display,
+                }
+              end,
+            },
+            sorter = sorters.get_generic_fuzzy_sorter(),
+            attach_mappings = function(prompt_bufnr, map)
+              actions.select_default:replace(function()
+                local selection = action_state.get_selected_entry()
+                actions.close(prompt_bufnr)
+                vim.api.nvim_set_current_buf(selection.value)
+              end)
+              return true
+            end,
+          })
+          :find()
+      end
+
+      vim.keymap.set('n', '<leader>bu', modified_buffers_picker, { desc = '[B]uffers [U]nsaved' })
+
+      -- I think this is a duplicate
       vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = 'Search [B]uffers' })
       vim.keymap.set('n', '<leader>si', function()
         -- You can pass additional configuration to telescope to change theme, layout, etc.
