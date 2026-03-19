@@ -1826,6 +1826,22 @@ end, { desc = 'Hover diagnostics' })
 -- toggle spell check
 vim.keymap.set('n', '<leader>ts', ':set spell!<CR>', { noremap = true, silent = true, desc = '[T]oggle [S]pell' })
 
+-- remove mappings set where I can't find them
+-- this was being mapped to opening the quickfix list but I want just leader qo to do that so removing this here
+-- Safely remove <leader>q mapping globally after all plugins load
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  callback = function()
+    pcall(vim.keymap.del, 'n', '<leader>q')
+  end,
+})
+-- Remove buffer-local mapping set by LSP on_attach
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    pcall(vim.keymap.del, 'n', '<leader>q', { buffer = event.buf })
+  end,
+})
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 --
