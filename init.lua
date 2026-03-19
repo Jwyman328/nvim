@@ -178,9 +178,6 @@ vim.o.confirm = true
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -1526,6 +1523,13 @@ vim.keymap.set('n', '<leader>qe', function()
   vim.cmd 'cclose'
 end, { desc = 'Quickfix empty and close' })
 
+-- Location list
+vim.api.nvim_set_keymap('n', '<leader>ln', ':lnext<CR>', { noremap = true, silent = true, desc = '[L]ocation list: [N]ext item' })
+vim.api.nvim_set_keymap('n', '<leader>lp', ':lprev<CR>', { noremap = true, silent = true, desc = '[L]ocation list: [P]revious item' })
+vim.api.nvim_set_keymap('n', '<leader>lc', ':lclose<CR>', { noremap = true, silent = true, desc = '[L]ocation list: [C]lose' })
+vim.api.nvim_set_keymap('n', '<leader>lo', ':lopen<CR>', { noremap = true, silent = true, desc = '[L]ocation list: [O]pen' })
+vim.api.nvim_set_keymap('n', '<leader>le', ':lgetexpr [] | lclose<CR>', { noremap = true, silent = true, desc = '[L]ocation list: [E]mpty' })
+
 -- copilot chat keymap
 local function ai_chat_action()
   if vim.g.vscode then
@@ -1804,11 +1808,12 @@ local function hover_diag()
   vim.lsp.util.open_floating_preview(lines, 'markdown', { border = 'rounded' })
 end
 
+-- Diagnostic keymaps
 vim.keymap.set('n', 'K', hover_diag, { desc = 'Hover + diagnostics' })
 
-vim.keymap.set('n', '<leader>do', function()
-  vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
-end, { desc = 'Hover diagnostics' })
+vim.keymap.set('n', '<leader>df', vim.diagnostic.setloclist, { desc = 'Open [D]iagnostics for [F]ile (loclist)' })
+
+vim.keymap.set('n', '<leader>da', vim.diagnostic.setqflist, { desc = 'Open [D]iagnostics [A]ll (quickfix/project)' })
 
 vim.keymap.set('n', '<leader>do', function()
   if vim.g.vscode then
