@@ -648,6 +648,15 @@ require('lazy').setup({
       end
 
       vim.keymap.set('n', '<leader>bu', modified_buffers_picker, { desc = '[B]uffers [U]nsaved' })
+      -- Buffer navigation
+      vim.keymap.set('n', '<leader>bn', ':bnext<CR>', {
+        desc = 'Next buffer',
+        silent = true,
+      })
+      vim.keymap.set('n', '<leader>bp', ':bprev<CR>', {
+        desc = 'Previous buffer',
+        silent = true,
+      })
 
       -- I think this is a duplicate
       vim.keymap.set('n', '<leader>sb', require('telescope.builtin').buffers, { desc = 'Search [B]uffers' })
