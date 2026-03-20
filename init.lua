@@ -1723,6 +1723,10 @@ vim.api.nvim_create_autocmd('VimEnter', {
 -- Simple keymap for current windows
 vim.api.nvim_set_keymap('n', '<leader>wc', ':q<CR>', { noremap = true, silent = true, desc = '[W]indow [C]lose' })
 vim.api.nvim_set_keymap('n', '<leader>ww', ':w<CR>', { noremap = true, silent = true, desc = '[W]indow [W]rite' })
+vim.api.nvim_set_keymap('n', '<leader>wi', ':vertical resize +5<CR>', { noremap = true, silent = true, desc = '[W]indow [I]ncrease (vertical)' })
+vim.api.nvim_set_keymap('n', '<leader>wd', ':vertical resize -5<CR>', { noremap = true, silent = true, desc = '[W]indow [D]ecrease (vertical)' })
+
+--
 -- window split
 vim.api.nvim_set_keymap('n', '<leader>ws', ':vs<CR>', { noremap = true, silent = true, desc = '[W]indow [S]plit' })
 -- window quit
