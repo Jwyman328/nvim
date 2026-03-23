@@ -468,6 +468,7 @@ require('lazy').setup({
         { '<leader>g', group = '[G]it file actions', mode = { 'n', 'v' } },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
+        { '<leader>m', group = '[M]ulti visual block operations', mode = { 'n', 'x' } },
         { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
         { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
         { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
@@ -1765,6 +1766,13 @@ end
 
 vim.keymap.set('n', '<leader>no', neotree_open, { desc = 'Neotree open' })
 vim.keymap.set('n', '<leader>nc', neotree_close, { desc = 'Neotree close' })
+
+-- Visual block hotkey
+vim.keymap.set('n', '<leader>mb', '<C-v>', { desc = 'Enter [M]ulti [B]lock mode' })
+-- Visual block operations (only work when in visual block mode)
+vim.keymap.set('x', '<leader>mi', 'I', { desc = '[M]ulti block [I]nsert at beginning' })
+vim.keymap.set('x', '<leader>ma', 'A', { desc = '[M]ulti block [A]ppend at end' })
+vim.keymap.set('x', '<leader>mc', 'c', { desc = '[M]ulti block [C]hange/replace' })
 
 -- find and replace open
 vim.keymap.set('n', '<leader>r', ':%s/', { desc = 'Neotree close' })
