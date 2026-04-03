@@ -470,7 +470,7 @@ require('lazy').setup({
         { '<leader>l', group = '[L]ocation list', mode = { 'n', 'v' } },
         { '<leader>m', group = '[M]ulti visual block operations', mode = { 'n', 'x' } },
         { '<leader>n', group = '[N]eotree', mode = { 'n', 'v' } },
-        { '<leader>p', group = 'Har[P]oon', mode = { 'n', 'v' } },
+        { '<leader>p', group = '[P]review markdown', mode = { 'n', 'v' } },
         { '<leader>q', group = '[Q]uickfix list', mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename', hidden = false },
         { '<leader>s', group = '[S]earch', hidden = false },
@@ -1299,6 +1299,11 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  {
+    'iamcco/markdown-preview.nvim',
+    build = 'cd app && npm install',
+    ft = { 'markdown' },
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1501,7 +1506,7 @@ vim.keymap.set('n', '<leader>gu', ':Gvdiffsplit<CR>', {
 
 -- Copilot related stuff
 require('CopilotChat').setup {
-  model = 'gpt-4o',
+  model = 'gpt-4',
   window = {
     layout = 'float',
     width = 0.8, -- 60% of screen width
@@ -1834,6 +1839,21 @@ vim.keymap.set('n', '<leader>do', function()
     vim.diagnostic.open_float { scope = 'cursor', border = 'rounded' }
   end
 end, { desc = 'Hover diagnostics' })
+
+-- Markdown preview hotkeys
+vim.keymap.set('n', '<leader>po', '<cmd>MarkdownPreview<CR>', {
+  desc = 'Open Markdown Preview',
+  silent = true,
+})
+vim.keymap.set('n', '<leader>pc', '<cmd>MarkdownPreviewStop<CR>', {
+  desc = 'Close Markdown Preview',
+  silent = true,
+})
+
+vim.keymap.set('n', '<leader>pt', '<cmd>MarkdownPreviewToggle<CR>', {
+  desc = 'Toggle Markdown Preview',
+  silent = true,
+})
 
 -- toggle spell check
 vim.keymap.set('n', '<leader>ts', ':set spell!<CR>', { noremap = true, silent = true, desc = '[T]oggle [S]pell' })
